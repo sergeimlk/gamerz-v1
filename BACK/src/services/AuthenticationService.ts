@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import { Response } from "express";
-import UserModel, { IUser } from "../models/UserModel";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { IUser } from "../models/UserModel";
 
 class AuthenticationService {
   private readonly JWT_SECRET: string;
@@ -19,28 +19,44 @@ class AuthenticationService {
     inputPassword: string,
     hashedPassword: string
   ): Promise<boolean> {
-    return await bcrypt.compare(inputPassword, hashedPassword);
+    console.log("[Auth] Début de la validation du mot de passe");
+    const isValid = await bcrypt.compare(inputPassword, hashedPassword);
+    console.log("[Auth] Résultat de la validation:", isValid);
+    return isValid;
   }
 
   generateToken(user: IUser): string {
-    return jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role_id,
-      },
-      this.JWT_SECRET,
-      { expiresIn: this.JWT_EXPIRES_IN } as jwt.SignOptions
-    );
+    console.log("[Auth] Génération du token JWT pour:", user.email);
+    const payload = {
+      id: user._id?.toString() || user.id,
+      email: user.email,
+      role: user.role_id,
+    };
+
+    // Définir les options avec le type jwt.SignOptions
+    const options: jwt.SignOptions = {
+      expiresIn: this.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
+    };
+
+    // Appel à jwt.sign avec des arguments typés explicitement
+    const token = jwt.sign(payload, this.JWT_SECRET, options);
+    console.log("[Auth] Token JWT généré avec succès");
+    return token;
   }
 
   setTokenCookie(res: Response, token: string): void {
+    console.log("[Auth] Configuration du cookie JWT");
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: this.COOKIE_MAX_AGE,
       path: "/",
+    });
+    console.log("[Auth] Cookie JWT configuré avec les options:", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: this.COOKIE_MAX_AGE,
     });
   }
 
@@ -60,7 +76,7 @@ class AuthenticationService {
     }
   }
 
-  async encryptPassword(user: Partial<IUser>): Promise<string | void> {
+  async encryptPassword(user: Partial<IUser>): Promise<string> {
     const saltRounds = process.env.SALT_SEED;
     if (!saltRounds) {
       throw new Error("[Error] SALT_SEED is not defined");

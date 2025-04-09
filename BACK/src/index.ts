@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import routes from "./routes/routes"; // Import the main router
+import cookieParser from "cookie-parser";
+import routes from "./routes/routes";
 import connectDB from "./db";
 
 const app = express();
@@ -13,10 +14,11 @@ app.use(
   })
 );
 
+app.use(cookieParser()); // Ajout du middleware cookie-parser
 app.use(express.json());
 
 // Routes
-app.use("/api", routes); // Mount all routes under /api
+app.use("/api", routes);
 
 const PORT = process.env.SERVER_PORT || 8080;
 
