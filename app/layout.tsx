@@ -11,7 +11,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "GamErz - Gaming Community Platform",
   description: "Connect, chat, and game with fellow enthusiasts in real-time",
-  generator: "v0.dev",
+  icons: {
+    icon: "/GLOGO.png",
+    apple: "/GLOGO.png",
+  },
 };
 
 export default function RootLayout({

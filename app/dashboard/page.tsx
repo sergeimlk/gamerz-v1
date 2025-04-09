@@ -1,13 +1,14 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useState, useRef, useEffect } from "react";
+import { UserIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Hash,
   Menu,
@@ -20,20 +21,19 @@ import {
   File,
   Image,
   Paperclip,
-  User,
   BarChart3,
   Activity,
   Trophy,
   Calendar,
   Target,
-} from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
-import { GlassModal } from "@/components/glass-modal"
-import { toast } from "@/components/ui/use-toast"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { useTheme } from "@/contexts/theme-context"
+} from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { GlassModal } from "@/components/glass-modal";
+import { toast } from "@/components/ui/use-toast";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useTheme } from "@/contexts/theme-context";
 import {
   AreaChart,
   Area,
@@ -48,21 +48,75 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { User } from "@/types/user";
 
 // Mock data
 const SALONS = [
-  { id: 1, name: "general", unread: true, description: "General discussion for all gamers" },
-  { id: 2, name: "gaming-news", unread: false, description: "Latest updates in the gaming world" },
-  { id: 3, name: "valorant", unread: false, description: "Valorant strategies and team-ups" },
-  { id: 4, name: "minecraft", unread: false, description: "Minecraft building and survival" },
-  { id: 5, name: "apex-legends", unread: true, description: "Apex Legends tactics and squads" },
-  { id: 6, name: "call-of-duty", unread: false, description: "Call of Duty multiplayer and Warzone" },
-  { id: 7, name: "fortnite", unread: false, description: "Fortnite battles and building" },
-  { id: 8, name: "league-of-legends", unread: false, description: "LoL champions and meta discussions" },
-]
+  {
+    id: 1,
+    name: "general",
+    unread: true,
+    description: "General discussion for all gamers",
+  },
+  {
+    id: 2,
+    name: "gaming-news",
+    unread: false,
+    description: "Latest updates in the gaming world",
+  },
+  {
+    id: 3,
+    name: "valorant",
+    unread: false,
+    description: "Valorant strategies and team-ups",
+  },
+  {
+    id: 4,
+    name: "minecraft",
+    unread: false,
+    description: "Minecraft building and survival",
+  },
+  {
+    id: 5,
+    name: "apex-legends",
+    unread: true,
+    description: "Apex Legends tactics and squads",
+  },
+  {
+    id: 6,
+    name: "call-of-duty",
+    unread: false,
+    description: "Call of Duty multiplayer and Warzone",
+  },
+  {
+    id: 7,
+    name: "fortnite",
+    unread: false,
+    description: "Fortnite battles and building",
+  },
+  {
+    id: 8,
+    name: "league-of-legends",
+    unread: false,
+    description: "LoL champions and meta discussions",
+  },
+];
 
 const ONLINE_USERS = [
   {
@@ -121,7 +175,7 @@ const ONLINE_USERS = [
     avatar: "/placeholder.svg?height=40&width=40",
     bio: "MMO guild leader, expert in raid strategies",
   },
-]
+];
 
 const MESSAGES = [
   {
@@ -136,7 +190,8 @@ const MESSAGES = [
     id: 2,
     user: "NinjaWarrior",
     avatar: "/placeholder.svg?height=40&width=40",
-    content: "Yeah, the new agent is pretty cool. I've been playing with her all morning.",
+    content:
+      "Yeah, the new agent is pretty cool. I've been playing with her all morning.",
     timestamp: "Today at 10:25 AM",
     attachments: [],
   },
@@ -144,7 +199,8 @@ const MESSAGES = [
     id: 3,
     user: "PixelQueen",
     avatar: "/placeholder.svg?height=40&width=40",
-    content: "I'm still downloading the update. My internet is so slow today 😭",
+    content:
+      "I'm still downloading the update. My internet is so slow today 😭",
     timestamp: "Today at 10:30 AM",
     attachments: [],
   },
@@ -154,7 +210,14 @@ const MESSAGES = [
     avatar: "/placeholder.svg?height=40&width=40",
     content: "The new map is amazing! So many strategic spots for ambushes.",
     timestamp: "Today at 10:32 AM",
-    attachments: [{ id: 1, name: "map-screenshot.jpg", type: "image", url: "/placeholder.svg?height=300&width=400" }],
+    attachments: [
+      {
+        id: 1,
+        name: "map-screenshot.jpg",
+        type: "image",
+        url: "/placeholder.svg?height=300&width=400",
+      },
+    ],
   },
   {
     id: 5,
@@ -164,7 +227,7 @@ const MESSAGES = [
     timestamp: "Today at 10:35 AM",
     attachments: [{ id: 2, name: "team-schedule.pdf", type: "file", url: "#" }],
   },
-]
+];
 
 // Mock data for charts
 const ACTIVITY_DATA = [
@@ -175,7 +238,7 @@ const ACTIVITY_DATA = [
   { name: "Fri", hours: 6.7 },
   { name: "Sat", hours: 8.1 },
   { name: "Sun", hours: 7.2 },
-]
+];
 
 const GAME_DISTRIBUTION = [
   { name: "Valorant", value: 35 },
@@ -183,7 +246,7 @@ const GAME_DISTRIBUTION = [
   { name: "Apex Legends", value: 25 },
   { name: "Fortnite", value: 15 },
   { name: "League of Legends", value: 5 },
-]
+];
 
 const PERFORMANCE_DATA = [
   { name: "Jan", wins: 15, losses: 10 },
@@ -192,7 +255,7 @@ const PERFORMANCE_DATA = [
   { name: "Apr", wins: 25, losses: 7 },
   { name: "May", wins: 22, losses: 9 },
   { name: "Jun", wins: 30, losses: 5 },
-]
+];
 
 const LEADERBOARD_DATA = [
   { rank: 1, name: "NinjaWarrior", score: 9850, winRate: "78%" },
@@ -200,56 +263,70 @@ const LEADERBOARD_DATA = [
   { rank: 3, name: "SniperElite", score: 9540, winRate: "72%" },
   { rank: 4, name: "GamerPro99", score: 9350, winRate: "70%" },
   { rank: 5, name: "RespawnHero", score: 9120, winRate: "68%" },
-]
+];
 
 const UPCOMING_EVENTS = [
   { id: 1, name: "Valorant Tournament", date: "2023-06-15", participants: 32 },
-  { id: 2, name: "Minecraft Building Contest", date: "2023-06-20", participants: 24 },
-  { id: 3, name: "Apex Legends Squad Challenge", date: "2023-06-25", participants: 48 },
-]
+  {
+    id: 2,
+    name: "Minecraft Building Contest",
+    date: "2023-06-20",
+    participants: 24,
+  },
+  {
+    id: 3,
+    name: "Apex Legends Squad Challenge",
+    date: "2023-06-25",
+    participants: 48,
+  },
+];
 
-const COLORS = ["#FF4560", "#00E396", "#775DD0", "#FEB019", "#4CAF50"]
+const COLORS = ["#FF4560", "#00E396", "#775DD0", "#FEB019", "#4CAF50"];
 
 export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [activeSalon, setActiveSalon] = useState(SALONS[0])
-  const [messageInput, setMessageInput] = useState("")
-  const [messages, setMessages] = useState(MESSAGES)
-  const [fileUploads, setFileUploads] = useState<File[]>([])
-  const [isDragging, setIsDragging] = useState(false)
-  const [joinRequestMessage, setJoinRequestMessage] = useState("")
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const isTablet = useMediaQuery("(max-width: 1024px)")
-  const [anonymousUsername, setAnonymousUsername] = useState<string | null>(null)
-  const [activeView, setActiveView] = useState<"chat" | "stats">("chat")
-  const { theme } = useTheme()
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeSalon, setActiveSalon] = useState(SALONS[0]);
+  const [messageInput, setMessageInput] = useState("");
+  const [messages, setMessages] = useState(MESSAGES);
+  const [fileUploads, setFileUploads] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [joinRequestMessage, setJoinRequestMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
+  const [anonymousUsername, setAnonymousUsername] = useState<string | null>(
+    null
+  );
+  const [activeView, setActiveView] = useState<"chat" | "stats">("chat");
+  const { theme } = useTheme();
+  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("anonymousUsername")
+    const storedUsername = localStorage.getItem("anonymousUsername");
     if (storedUsername) {
-      setAnonymousUsername(storedUsername)
+      setAnonymousUsername(storedUsername);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (isMobile || isTablet) {
-      setSidebarOpen(false)
+      setSidebarOpen(false);
     } else {
-      setSidebarOpen(true)
+      setSidebarOpen(true);
     }
-  }, [isMobile, isTablet])
+  }, [isMobile, isTablet]);
 
   const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!messageInput.trim() && fileUploads.length === 0) return
+    e.preventDefault();
+    if (!messageInput.trim() && fileUploads.length === 0) return;
 
     const attachments = fileUploads.map((file, index) => ({
       id: Date.now() + index,
       name: file.name,
       type: file.type.startsWith("image/") ? "image" : "file",
       url: URL.createObjectURL(file),
-    }))
+    }));
 
     const newMessage = {
       id: messages.length + 1,
@@ -258,87 +335,113 @@ export default function DashboardPage() {
       content: messageInput,
       timestamp: "Just now",
       attachments,
-    }
+    };
 
-    setMessages([...messages, newMessage])
-    setMessageInput("")
-    setFileUploads([])
-  }
+    setMessages([...messages, newMessage]);
+    setMessageInput("");
+    setFileUploads([]);
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const filesArray = Array.from(e.target.files)
-      setFileUploads([...fileUploads, ...filesArray])
+      const filesArray = Array.from(e.target.files);
+      setFileUploads([...fileUploads, ...filesArray]);
     }
-  }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = () => {
-    setIsDragging(false)
-  }
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const filesArray = Array.from(e.dataTransfer.files)
-      setFileUploads([...fileUploads, ...filesArray])
+      const filesArray = Array.from(e.dataTransfer.files);
+      setFileUploads([...fileUploads, ...filesArray]);
     }
-  }
+  };
 
   const removeFile = (index: number) => {
-    const newFiles = [...fileUploads]
-    newFiles.splice(index, 1)
-    setFileUploads(newFiles)
-  }
+    const newFiles = [...fileUploads];
+    newFiles.splice(index, 1);
+    setFileUploads(newFiles);
+  };
 
   const openFileDialog = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click()
+      fileInputRef.current.click();
     }
-  }
+  };
 
   const handleJoinRequest = (salon: (typeof SALONS)[0]) => {
     // Here you would typically send this request to your backend
-    console.log(`Join request for ${salon.name}: ${joinRequestMessage}`)
+    console.log(`Join request for ${salon.name}: ${joinRequestMessage}`);
     toast({
       title: "Join Request Sent",
       description: `Your request to join ${salon.name} has been sent to the admin.`,
-    })
-    setJoinRequestMessage("")
-  }
+    });
+    setJoinRequestMessage("");
+  };
 
-  const [activeModal, setActiveModal] = useState<"salon" | "user" | null>(null)
-  const [selectedItem, setSelectedItem] = useState<any>(null)
+  const [activeModal, setActiveModal] = useState<"salon" | "user" | null>(null);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const openModal = (type: "salon" | "user", item: any) => {
-    setActiveModal(type)
-    setSelectedItem(item)
-  }
+    setActiveModal(type);
+    setSelectedItem(item);
+  };
 
   const closeModal = () => {
-    setActiveModal(null)
-    setSelectedItem(null)
-  }
+    setActiveModal(null);
+    setSelectedItem(null);
+  };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("/api/users");
+        if (!response.ok) throw new Error("Failed to fetch users");
+        const users = await response.json();
+        setOnlineUsers(users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load users",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <div
       className={cn(
         "h-screen flex overflow-hidden font-sans",
-        theme === "light" ? "bg-gray-50 text-gray-900" : "bg-gradient-to-br from-black via-red-900 to-black text-white",
+        theme === "light"
+          ? "bg-gray-50 text-gray-900"
+          : "bg-gradient-to-br from-black via-red-900 to-black text-white"
       )}
     >
       {/* Sidebar */}
       <div
         className={cn(
           "backdrop-blur-xl w-64 flex-shrink-0 flex flex-col border-r transition-all duration-300 ease-in-out z-20",
-          theme === "light" ? "bg-white border-gray-200" : "bg-black/50 border-white/10",
-          (isMobile || isTablet) && !sidebarOpen ? "w-0" : "w-full md:w-64",
+          theme === "light"
+            ? "bg-white border-gray-200"
+            : "bg-black/50 border-white/10",
+          (isMobile || isTablet) && !sidebarOpen ? "w-0" : "w-full md:w-64"
         )}
       >
         {sidebarOpen && (
@@ -348,7 +451,7 @@ export default function DashboardPage() {
                 href="/home"
                 className={cn(
                   "text-xl font-bold hover:text-red-500 transition-colors",
-                  theme === "light" ? "text-gray-900" : "text-white",
+                  theme === "light" ? "text-gray-900" : "text-white"
                 )}
               >
                 <span className="text-red-500">GamErz</span>
@@ -359,7 +462,11 @@ export default function DashboardPage() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setSidebarOpen(false)}
-                  className={cn(theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-white hover:bg-white/10")}
+                  className={cn(
+                    theme === "light"
+                      ? "text-gray-700 hover:bg-gray-100"
+                      : "text-white hover:bg-white/10"
+                  )}
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -373,7 +480,7 @@ export default function DashboardPage() {
                   "flex-1",
                   theme === "light"
                     ? "bg-gray-100 text-gray-900 hover:bg-gray-200 border-gray-200"
-                    : "bg-white/10 text-white hover:bg-white/20 border-white/20",
+                    : "bg-white/10 text-white hover:bg-white/20 border-white/20"
                 )}
                 onClick={() => setActiveView("chat")}
               >
@@ -386,7 +493,7 @@ export default function DashboardPage() {
                   "flex-1",
                   theme === "light"
                     ? "bg-gray-100 text-gray-900 hover:bg-gray-200 border-gray-200"
-                    : "bg-white/10 text-white hover:bg-white/20 border-white/20",
+                    : "bg-white/10 text-white hover:bg-white/20 border-white/20"
                 )}
                 onClick={() => setActiveView("stats")}
               >
@@ -400,7 +507,7 @@ export default function DashboardPage() {
                 <h2
                   className={cn(
                     "text-xs font-semibold uppercase tracking-wider mb-2",
-                    theme === "light" ? "text-gray-700" : "text-white/70",
+                    theme === "light" ? "text-gray-700" : "text-white/70"
                   )}
                 >
                   Salons
@@ -416,91 +523,135 @@ export default function DashboardPage() {
                           ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                           : "text-white/70 hover:text-white hover:bg-white/10",
                         activeSalon.id === salon.id &&
-                          (theme === "light" ? "bg-gray-100 text-gray-900" : "bg-white/20 text-white"),
+                          (theme === "light"
+                            ? "bg-gray-100 text-gray-900"
+                            : "bg-white/20 text-white")
                       )}
                       onClick={() => {
-                        setActiveSalon(salon)
-                        setActiveView("chat")
+                        setActiveSalon(salon);
+                        setActiveView("chat");
                       }}
                     >
                       <Hash className="mr-2 h-4 w-4" />
                       <span className="truncate">{salon.name}</span>
-                      {salon.unread && <span className="ml-auto flex h-2 w-2 rounded-full bg-red-500" />}
+                      {salon.unread && (
+                        <span className="ml-auto flex h-2 w-2 rounded-full bg-red-500" />
+                      )}
                     </Button>
                   ))}
                 </div>
               </div>
 
-              <Separator className={cn("my-3", theme === "light" ? "bg-gray-200" : "bg-white/10")} />
+              <Separator
+                className={cn(
+                  "my-3",
+                  theme === "light" ? "bg-gray-200" : "bg-white/10"
+                )}
+              />
 
               <div className="p-3">
                 <div className="flex items-center justify-between mb-2">
                   <h2
                     className={cn(
                       "text-xs font-semibold uppercase tracking-wider",
-                      theme === "light" ? "text-gray-700" : "text-white/70",
+                      theme === "light" ? "text-gray-700" : "text-white/70"
                     )}
                   >
                     Online Users
                   </h2>
-                  <span className={cn("text-xs", theme === "light" ? "text-gray-500" : "text-white/50")}>
+                  <span
+                    className={cn(
+                      "text-xs",
+                      theme === "light" ? "text-gray-500" : "text-white/50"
+                    )}
+                  >
                     {ONLINE_USERS.length}
                   </span>
                 </div>
                 <div className="space-y-1">
-                  {ONLINE_USERS.map((user) => (
-                    <Button
-                      key={user.id}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start",
-                        theme === "light"
-                          ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                          : "text-white/70 hover:text-white hover:bg-white/10",
-                      )}
-                      onClick={() => openModal("user", user)}
-                    >
-                      <div className="relative mr-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback
+                  {loading ? (
+                    <div className="flex items-center justify-center p-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                    </div>
+                  ) : (
+                    onlineUsers.map((user) => (
+                      <Button
+                        key={user._id}
+                        variant="ghost"
+                        className={cn(
+                          "w-full justify-start",
+                          theme === "light"
+                            ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            : "text-white/70 hover:text-white hover:bg-white/10"
+                        )}
+                        onClick={() => openModal("user", user)}
+                      >
+                        <div className="relative mr-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={user.avatar} alt={user.pseudo} />
+                            <AvatarFallback
+                              className={cn(
+                                theme === "light"
+                                  ? "bg-gray-200 text-gray-700"
+                                  : "bg-zinc-700 text-zinc-300"
+                              )}
+                            >
+                              {user.pseudo.substring(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span
                             className={cn(
-                              theme === "light" ? "bg-gray-200 text-gray-700" : "bg-zinc-700 text-zinc-300",
+                              "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2",
+                              theme === "light"
+                                ? "border-white"
+                                : "border-black",
+                              user.status === "online" && "bg-green-500",
+                              user.status === "idle" && "bg-yellow-500",
+                              user.status === "dnd" && "bg-red-500"
                             )}
-                          >
-                            {user.name.substring(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span
-                          className={cn(
-                            "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2",
-                            theme === "light" ? "border-white" : "border-black",
-                            user.status === "online" && "bg-green-500",
-                            user.status === "idle" && "bg-yellow-500",
-                            user.status === "dnd" && "bg-red-500",
-                          )}
-                        />
-                      </div>
-                      <span className="text-sm truncate">{user.name}</span>
-                    </Button>
-                  ))}
+                          />
+                        </div>
+                        <span className="text-sm truncate">{user.pseudo}</span>
+                      </Button>
+                    ))
+                  )}
                 </div>
               </div>
             </ScrollArea>
 
-            <div className={cn("p-3 border-t", theme === "light" ? "border-gray-200" : "border-white/10")}>
+            <div
+              className={cn(
+                "p-3 border-t",
+                theme === "light" ? "border-gray-200" : "border-white/10"
+              )}
+            >
               <div className="flex items-center">
                 <Avatar className="h-9 w-9 mr-2">
-                  <AvatarImage src="/placeholder.svg?height=40&width=40" alt="Your Avatar" />
+                  <AvatarImage
+                    src="/placeholder.svg?height=40&width=40"
+                    alt="Your Avatar"
+                  />
                   <AvatarFallback className="bg-red-500 text-white">
-                    {anonymousUsername ? anonymousUsername.substring(0, 2).toUpperCase() : "AN"}
+                    {anonymousUsername
+                      ? anonymousUsername.substring(0, 2).toUpperCase()
+                      : "AN"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className={cn("text-sm font-medium truncate", theme === "light" ? "text-gray-900" : "text-white")}>
+                  <p
+                    className={cn(
+                      "text-sm font-medium truncate",
+                      theme === "light" ? "text-gray-900" : "text-white"
+                    )}
+                  >
                     {anonymousUsername || "Anonymous User"}
                   </p>
-                  <p className={cn("text-xs truncate", theme === "light" ? "text-gray-500" : "text-white/50")}>
+                  <p
+                    className={cn(
+                      "text-xs truncate",
+                      theme === "light" ? "text-gray-500" : "text-white/50"
+                    )}
+                  >
                     Online
                   </p>
                 </div>
@@ -510,12 +661,12 @@ export default function DashboardPage() {
                   className={cn(
                     theme === "light"
                       ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/70 hover:text-white hover:bg-white/10",
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   )}
                   asChild
                 >
                   <Link href="/profile">
-                    <User className="h-5 w-5" />
+                    <UserIcon className="h-5 w-5" />
                   </Link>
                 </Button>
                 <Button
@@ -524,7 +675,7 @@ export default function DashboardPage() {
                   className={cn(
                     theme === "light"
                       ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/70 hover:text-white hover:bg-white/10",
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   )}
                   asChild
                 >
@@ -538,7 +689,7 @@ export default function DashboardPage() {
                   className={cn(
                     theme === "light"
                       ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/70 hover:text-white hover:bg-white/10",
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   )}
                 >
                   <LogOut className="h-5 w-5" />
@@ -554,15 +705,17 @@ export default function DashboardPage() {
         className={cn(
           "flex-1 flex flex-col overflow-hidden",
           theme === "light" ? "bg-gray-50" : "bg-black/30",
-          "backdrop-blur-sm",
+          "backdrop-blur-sm"
         )}
       >
         {/* Header */}
         <header
           className={cn(
             "h-14 flex items-center px-4 border-b",
-            theme === "light" ? "bg-white border-gray-200" : "bg-black/50 border-white/10",
-            "backdrop-blur-md",
+            theme === "light"
+              ? "bg-white border-gray-200"
+              : "bg-black/50 border-white/10",
+            "backdrop-blur-md"
           )}
         >
           {(isMobile || isTablet) && !sidebarOpen && (
@@ -574,7 +727,7 @@ export default function DashboardPage() {
                 "mr-2",
                 theme === "light"
                   ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                  : "text-white/70 hover:text-white hover:bg-white/10",
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
               <Menu className="h-5 w-5" />
@@ -583,15 +736,37 @@ export default function DashboardPage() {
           <div className="flex items-center">
             {activeView === "chat" ? (
               <>
-                <Hash className={cn("h-5 w-5 mr-2", theme === "light" ? "text-gray-500" : "text-white/70")} />
-                <h2 className={theme === "light" ? "text-gray-900 font-medium" : "text-white font-medium"}>
+                <Hash
+                  className={cn(
+                    "h-5 w-5 mr-2",
+                    theme === "light" ? "text-gray-500" : "text-white/70"
+                  )}
+                />
+                <h2
+                  className={
+                    theme === "light"
+                      ? "text-gray-900 font-medium"
+                      : "text-white font-medium"
+                  }
+                >
                   {activeSalon.name}
                 </h2>
               </>
             ) : (
               <>
-                <BarChart3 className={cn("h-5 w-5 mr-2", theme === "light" ? "text-gray-500" : "text-white/70")} />
-                <h2 className={theme === "light" ? "text-gray-900 font-medium" : "text-white font-medium"}>
+                <BarChart3
+                  className={cn(
+                    "h-5 w-5 mr-2",
+                    theme === "light" ? "text-gray-500" : "text-white/70"
+                  )}
+                />
+                <h2
+                  className={
+                    theme === "light"
+                      ? "text-gray-900 font-medium"
+                      : "text-white font-medium"
+                  }
+                >
                   Gaming Statistics
                 </h2>
               </>
@@ -604,7 +779,7 @@ export default function DashboardPage() {
               className={cn(
                 theme === "light"
                   ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                  : "text-white/70 hover:text-white hover:bg-white/10",
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
               <Bell className="h-5 w-5" />
@@ -615,7 +790,7 @@ export default function DashboardPage() {
               className={cn(
                 theme === "light"
                   ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                  : "text-white/70 hover:text-white hover:bg-white/10",
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
               <Users className="h-5 w-5" />
@@ -639,81 +814,121 @@ export default function DashboardPage() {
                     <Avatar className="h-10 w-10 mr-3 mt-0.5 flex-shrink-0">
                       <AvatarImage src={message.avatar} alt={message.user} />
                       <AvatarFallback
-                        className={cn(theme === "light" ? "bg-gray-200 text-gray-700" : "bg-zinc-700 text-zinc-300")}
+                        className={cn(
+                          theme === "light"
+                            ? "bg-gray-200 text-gray-700"
+                            : "bg-zinc-700 text-zinc-300"
+                        )}
                       >
                         {message.user.substring(0, 2)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center mb-1">
-                        <span className={cn("font-medium mr-2", theme === "light" ? "text-gray-900" : "text-white")}>
+                        <span
+                          className={cn(
+                            "font-medium mr-2",
+                            theme === "light" ? "text-gray-900" : "text-white"
+                          )}
+                        >
                           {message.user}
                         </span>
-                        <span className={cn("text-xs", theme === "light" ? "text-gray-500" : "text-white/50")}>
+                        <span
+                          className={cn(
+                            "text-xs",
+                            theme === "light"
+                              ? "text-gray-500"
+                              : "text-white/50"
+                          )}
+                        >
                           {message.timestamp}
                         </span>
                       </div>
                       {message.content && (
-                        <p className={cn("mb-2", theme === "light" ? "text-gray-800" : "text-white/90")}>
+                        <p
+                          className={cn(
+                            "mb-2",
+                            theme === "light"
+                              ? "text-gray-800"
+                              : "text-white/90"
+                          )}
+                        >
                           {message.content}
                         </p>
                       )}
 
                       {/* File Attachments */}
-                      {message.attachments && message.attachments.length > 0 && (
-                        <div className="space-y-2 mt-2">
-                          {message.attachments.map((attachment) => (
-                            <div
-                              key={attachment.id}
-                              className={cn(
-                                "rounded-md overflow-hidden border",
-                                theme === "light"
-                                  ? "border-gray-200 bg-white"
-                                  : "border-white/10 bg-white/5 backdrop-blur-sm",
-                              )}
-                            >
-                              {attachment.type === "image" ? (
-                                <div className="relative">
-                                  <img
-                                    src={attachment.url || "/placeholder.svg"}
-                                    alt={attachment.name}
-                                    className="max-w-full max-h-80 object-contain"
-                                  />
-                                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm px-3 py-1.5 text-xs text-white">
-                                    {attachment.name}
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="flex items-center p-3">
-                                  <div
-                                    className={cn(
-                                      "p-2 rounded-md mr-3",
-                                      theme === "light" ? "bg-gray-100" : "bg-white/10",
-                                    )}
-                                  >
-                                    <File
-                                      className={cn("h-6 w-6", theme === "light" ? "text-gray-500" : "text-white/70")}
+                      {message.attachments &&
+                        message.attachments.length > 0 && (
+                          <div className="space-y-2 mt-2">
+                            {message.attachments.map((attachment) => (
+                              <div
+                                key={attachment.id}
+                                className={cn(
+                                  "rounded-md overflow-hidden border",
+                                  theme === "light"
+                                    ? "border-gray-200 bg-white"
+                                    : "border-white/10 bg-white/5 backdrop-blur-sm"
+                                )}
+                              >
+                                {attachment.type === "image" ? (
+                                  <div className="relative">
+                                    <img
+                                      src={attachment.url || "/placeholder.svg"}
+                                      alt={attachment.name}
+                                      className="max-w-full max-h-80 object-contain"
                                     />
+                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm px-3 py-1.5 text-xs text-white">
+                                      {attachment.name}
+                                    </div>
                                   </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p
+                                ) : (
+                                  <div className="flex items-center p-3">
+                                    <div
                                       className={cn(
-                                        "text-sm font-medium truncate",
-                                        theme === "light" ? "text-gray-900" : "text-white",
+                                        "p-2 rounded-md mr-3",
+                                        theme === "light"
+                                          ? "bg-gray-100"
+                                          : "bg-white/10"
                                       )}
                                     >
-                                      {attachment.name}
-                                    </p>
-                                    <p className={cn("text-xs", theme === "light" ? "text-gray-500" : "text-white/50")}>
-                                      Click to download
-                                    </p>
+                                      <File
+                                        className={cn(
+                                          "h-6 w-6",
+                                          theme === "light"
+                                            ? "text-gray-500"
+                                            : "text-white/70"
+                                        )}
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p
+                                        className={cn(
+                                          "text-sm font-medium truncate",
+                                          theme === "light"
+                                            ? "text-gray-900"
+                                            : "text-white"
+                                        )}
+                                      >
+                                        {attachment.name}
+                                      </p>
+                                      <p
+                                        className={cn(
+                                          "text-xs",
+                                          theme === "light"
+                                            ? "text-gray-500"
+                                            : "text-white/50"
+                                        )}
+                                      >
+                                        Click to download
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                     </div>
                   </div>
                 ))}
@@ -725,12 +940,17 @@ export default function DashboardPage() {
                   className={cn(
                     "absolute inset-0 flex items-center justify-center z-10 border-2 border-dashed border-red-500 rounded-md",
                     theme === "light" ? "bg-gray-100/80" : "bg-black/80",
-                    "backdrop-blur-sm",
+                    "backdrop-blur-sm"
                   )}
                 >
                   <div className="text-center p-6">
                     <Paperclip className="h-12 w-12 text-red-500 mx-auto mb-3" />
-                    <p className={cn("text-xl font-medium", theme === "light" ? "text-gray-900" : "text-white")}>
+                    <p
+                      className={cn(
+                        "text-xl font-medium",
+                        theme === "light" ? "text-gray-900" : "text-white"
+                      )}
+                    >
                       Drop files to upload
                     </p>
                   </div>
@@ -743,8 +963,10 @@ export default function DashboardPage() {
               <div
                 className={cn(
                   "p-2 border-t",
-                  theme === "light" ? "bg-gray-100 border-gray-200" : "bg-black/50 border-white/10",
-                  "backdrop-blur-sm",
+                  theme === "light"
+                    ? "bg-gray-100 border-gray-200"
+                    : "bg-black/50 border-white/10",
+                  "backdrop-blur-sm"
                 )}
               >
                 <div className="flex flex-wrap gap-2">
@@ -753,18 +975,34 @@ export default function DashboardPage() {
                       key={index}
                       className={cn(
                         "relative rounded-md p-2 pr-8 flex items-center",
-                        theme === "light" ? "bg-gray-200" : "bg-white/10 backdrop-blur-sm",
+                        theme === "light"
+                          ? "bg-gray-200"
+                          : "bg-white/10 backdrop-blur-sm"
                       )}
                     >
                       {file.type.startsWith("image/") ? (
-                        <Image className={cn("h-4 w-4 mr-2", theme === "light" ? "text-gray-700" : "text-white/70")} />
+                        <Image
+                          className={cn(
+                            "h-4 w-4 mr-2",
+                            theme === "light"
+                              ? "text-gray-700"
+                              : "text-white/70"
+                          )}
+                        />
                       ) : (
-                        <File className={cn("h-4 w-4 mr-2", theme === "light" ? "text-gray-700" : "text-white/70")} />
+                        <File
+                          className={cn(
+                            "h-4 w-4 mr-2",
+                            theme === "light"
+                              ? "text-gray-700"
+                              : "text-white/70"
+                          )}
+                        />
                       )}
                       <span
                         className={cn(
                           "text-xs truncate max-w-[150px]",
-                          theme === "light" ? "text-gray-800" : "text-white/90",
+                          theme === "light" ? "text-gray-800" : "text-white/90"
                         )}
                       >
                         {file.name}
@@ -772,7 +1010,9 @@ export default function DashboardPage() {
                       <button
                         className={cn(
                           "absolute top-1 right-1",
-                          theme === "light" ? "text-gray-500 hover:text-gray-900" : "text-white/50 hover:text-white",
+                          theme === "light"
+                            ? "text-gray-500 hover:text-gray-900"
+                            : "text-white/50 hover:text-white"
                         )}
                         onClick={() => removeFile(index)}
                       >
@@ -788,12 +1028,20 @@ export default function DashboardPage() {
             <div
               className={cn(
                 "p-3 border-t",
-                theme === "light" ? "bg-white border-gray-200" : "bg-black/50 border-white/10",
-                "backdrop-blur-sm",
+                theme === "light"
+                  ? "bg-white border-gray-200"
+                  : "bg-black/50 border-white/10",
+                "backdrop-blur-sm"
               )}
             >
               <form onSubmit={handleSendMessage} className="flex items-center">
-                <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelect} multiple />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  multiple
+                />
                 <Button
                   type="button"
                   variant="ghost"
@@ -801,7 +1049,7 @@ export default function DashboardPage() {
                   className={cn(
                     theme === "light"
                       ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/70 hover:text-white hover:bg-white/10",
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   )}
                   onClick={openFileDialog}
                 >
@@ -815,7 +1063,7 @@ export default function DashboardPage() {
                     "flex-1 mx-2 focus-visible:ring-red-500",
                     theme === "light"
                       ? "bg-gray-100 border-gray-200 text-gray-900 placeholder:text-gray-500"
-                      : "bg-white/5 border-white/10 text-white placeholder:text-white/50",
+                      : "bg-white/5 border-white/10 text-white placeholder:text-white/50"
                   )}
                 />
                 <Button
@@ -825,7 +1073,7 @@ export default function DashboardPage() {
                   className={cn(
                     theme === "light"
                       ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      : "text-white/70 hover:text-white hover:bg-white/10",
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   )}
                   disabled={!messageInput.trim() && fileUploads.length === 0}
                 >
@@ -840,70 +1088,176 @@ export default function DashboardPage() {
             <div className="space-y-6">
               {/* Top Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardContent className="p-6 flex items-center">
-                    <div className={cn("p-3 rounded-full mr-4", theme === "light" ? "bg-blue-100" : "bg-blue-500/20")}>
-                      <Activity className={cn("h-6 w-6", theme === "light" ? "text-blue-600" : "text-blue-400")} />
+                    <div
+                      className={cn(
+                        "p-3 rounded-full mr-4",
+                        theme === "light" ? "bg-blue-100" : "bg-blue-500/20"
+                      )}
+                    >
+                      <Activity
+                        className={cn(
+                          "h-6 w-6",
+                          theme === "light" ? "text-blue-600" : "text-blue-400"
+                        )}
+                      />
                     </div>
                     <div>
-                      <p className={cn("text-sm font-medium", theme === "light" ? "text-gray-500" : "text-white/70")}>
+                      <p
+                        className={cn(
+                          "text-sm font-medium",
+                          theme === "light" ? "text-gray-500" : "text-white/70"
+                        )}
+                      >
                         Weekly Playtime
                       </p>
-                      <p className={cn("text-2xl font-bold", theme === "light" ? "text-gray-900" : "text-white")}>
+                      <p
+                        className={cn(
+                          "text-2xl font-bold",
+                          theme === "light" ? "text-gray-900" : "text-white"
+                        )}
+                      >
                         37.8 hrs
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardContent className="p-6 flex items-center">
                     <div
-                      className={cn("p-3 rounded-full mr-4", theme === "light" ? "bg-green-100" : "bg-green-500/20")}
+                      className={cn(
+                        "p-3 rounded-full mr-4",
+                        theme === "light" ? "bg-green-100" : "bg-green-500/20"
+                      )}
                     >
-                      <Trophy className={cn("h-6 w-6", theme === "light" ? "text-green-600" : "text-green-400")} />
+                      <Trophy
+                        className={cn(
+                          "h-6 w-6",
+                          theme === "light"
+                            ? "text-green-600"
+                            : "text-green-400"
+                        )}
+                      />
                     </div>
                     <div>
-                      <p className={cn("text-sm font-medium", theme === "light" ? "text-gray-500" : "text-white/70")}>
+                      <p
+                        className={cn(
+                          "text-sm font-medium",
+                          theme === "light" ? "text-gray-500" : "text-white/70"
+                        )}
+                      >
                         Win Rate
                       </p>
-                      <p className={cn("text-2xl font-bold", theme === "light" ? "text-gray-900" : "text-white")}>
+                      <p
+                        className={cn(
+                          "text-2xl font-bold",
+                          theme === "light" ? "text-gray-900" : "text-white"
+                        )}
+                      >
                         72%
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardContent className="p-6 flex items-center">
                     <div
-                      className={cn("p-3 rounded-full mr-4", theme === "light" ? "bg-purple-100" : "bg-purple-500/20")}
+                      className={cn(
+                        "p-3 rounded-full mr-4",
+                        theme === "light" ? "bg-purple-100" : "bg-purple-500/20"
+                      )}
                     >
-                      <Target className={cn("h-6 w-6", theme === "light" ? "text-purple-600" : "text-purple-400")} />
+                      <Target
+                        className={cn(
+                          "h-6 w-6",
+                          theme === "light"
+                            ? "text-purple-600"
+                            : "text-purple-400"
+                        )}
+                      />
                     </div>
                     <div>
-                      <p className={cn("text-sm font-medium", theme === "light" ? "text-gray-500" : "text-white/70")}>
+                      <p
+                        className={cn(
+                          "text-sm font-medium",
+                          theme === "light" ? "text-gray-500" : "text-white/70"
+                        )}
+                      >
                         Accuracy
                       </p>
-                      <p className={cn("text-2xl font-bold", theme === "light" ? "text-gray-900" : "text-white")}>
+                      <p
+                        className={cn(
+                          "text-2xl font-bold",
+                          theme === "light" ? "text-gray-900" : "text-white"
+                        )}
+                      >
                         85%
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardContent className="p-6 flex items-center">
                     <div
-                      className={cn("p-3 rounded-full mr-4", theme === "light" ? "bg-amber-100" : "bg-amber-500/20")}
+                      className={cn(
+                        "p-3 rounded-full mr-4",
+                        theme === "light" ? "bg-amber-100" : "bg-amber-500/20"
+                      )}
                     >
-                      <Calendar className={cn("h-6 w-6", theme === "light" ? "text-amber-600" : "text-amber-400")} />
+                      <Calendar
+                        className={cn(
+                          "h-6 w-6",
+                          theme === "light"
+                            ? "text-amber-600"
+                            : "text-amber-400"
+                        )}
+                      />
                     </div>
                     <div>
-                      <p className={cn("text-sm font-medium", theme === "light" ? "text-gray-500" : "text-white/70")}>
+                      <p
+                        className={cn(
+                          "text-sm font-medium",
+                          theme === "light" ? "text-gray-500" : "text-white/70"
+                        )}
+                      >
                         Upcoming Events
                       </p>
-                      <p className={cn("text-2xl font-bold", theme === "light" ? "text-gray-900" : "text-white")}>3</p>
+                      <p
+                        className={cn(
+                          "text-2xl font-bold",
+                          theme === "light" ? "text-gray-900" : "text-white"
+                        )}
+                      >
+                        3
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -912,12 +1266,26 @@ export default function DashboardPage() {
               {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Weekly Activity Chart */}
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardHeader>
-                    <CardTitle className={theme === "light" ? "text-gray-900" : "text-white"}>
+                    <CardTitle
+                      className={
+                        theme === "light" ? "text-gray-900" : "text-white"
+                      }
+                    >
                       Weekly Gaming Activity
                     </CardTitle>
-                    <CardDescription className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                    <CardDescription
+                      className={
+                        theme === "light" ? "text-gray-500" : "text-white/70"
+                      }
+                    >
                       Hours played per day over the last week
                     </CardDescription>
                   </CardHeader>
@@ -926,21 +1294,58 @@ export default function DashboardPage() {
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={ACTIVITY_DATA}>
                           <defs>
-                            <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#FF4560" stopOpacity={0.8} />
-                              <stop offset="95%" stopColor="#FF4560" stopOpacity={0} />
+                            <linearGradient
+                              id="colorHours"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor="#FF4560"
+                                stopOpacity={0.8}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="#FF4560"
+                                stopOpacity={0}
+                              />
                             </linearGradient>
                           </defs>
                           <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke={theme === "light" ? "#e5e7eb" : "rgba(255, 255, 255, 0.1)"}
+                            stroke={
+                              theme === "light"
+                                ? "#e5e7eb"
+                                : "rgba(255, 255, 255, 0.1)"
+                            }
                           />
-                          <XAxis dataKey="name" stroke={theme === "light" ? "#6b7280" : "rgba(255, 255, 255, 0.7)"} />
-                          <YAxis stroke={theme === "light" ? "#6b7280" : "rgba(255, 255, 255, 0.7)"} />
+                          <XAxis
+                            dataKey="name"
+                            stroke={
+                              theme === "light"
+                                ? "#6b7280"
+                                : "rgba(255, 255, 255, 0.7)"
+                            }
+                          />
+                          <YAxis
+                            stroke={
+                              theme === "light"
+                                ? "#6b7280"
+                                : "rgba(255, 255, 255, 0.7)"
+                            }
+                          />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: theme === "light" ? "#fff" : "rgba(0, 0, 0, 0.8)",
-                              borderColor: theme === "light" ? "#e5e7eb" : "rgba(255, 255, 255, 0.1)",
+                              backgroundColor:
+                                theme === "light"
+                                  ? "#fff"
+                                  : "rgba(0, 0, 0, 0.8)",
+                              borderColor:
+                                theme === "light"
+                                  ? "#e5e7eb"
+                                  : "rgba(255, 255, 255, 0.1)",
                               color: theme === "light" ? "#111827" : "#fff",
                             }}
                           />
@@ -958,12 +1363,26 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Game Distribution Chart */}
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardHeader>
-                    <CardTitle className={theme === "light" ? "text-gray-900" : "text-white"}>
+                    <CardTitle
+                      className={
+                        theme === "light" ? "text-gray-900" : "text-white"
+                      }
+                    >
                       Game Distribution
                     </CardTitle>
-                    <CardDescription className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                    <CardDescription
+                      className={
+                        theme === "light" ? "text-gray-500" : "text-white/70"
+                      }
+                    >
                       Percentage of time spent on each game
                     </CardDescription>
                   </CardHeader>
@@ -979,16 +1398,27 @@ export default function DashboardPage() {
                             outerRadius={100}
                             fill="#8884d8"
                             dataKey="value"
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            label={({ name, percent }) =>
+                              `${name}: ${(percent * 100).toFixed(0)}%`
+                            }
                           >
                             {GAME_DISTRIBUTION.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
                             ))}
                           </Pie>
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: theme === "light" ? "#fff" : "rgba(0, 0, 0, 0.8)",
-                              borderColor: theme === "light" ? "#e5e7eb" : "rgba(255, 255, 255, 0.1)",
+                              backgroundColor:
+                                theme === "light"
+                                  ? "#fff"
+                                  : "rgba(0, 0, 0, 0.8)",
+                              borderColor:
+                                theme === "light"
+                                  ? "#e5e7eb"
+                                  : "rgba(255, 255, 255, 0.1)",
                               color: theme === "light" ? "#111827" : "#fff",
                             }}
                           />
@@ -1003,12 +1433,26 @@ export default function DashboardPage() {
               {/* Performance and Leaderboard */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Performance Chart */}
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardHeader>
-                    <CardTitle className={theme === "light" ? "text-gray-900" : "text-white"}>
+                    <CardTitle
+                      className={
+                        theme === "light" ? "text-gray-900" : "text-white"
+                      }
+                    >
                       Performance History
                     </CardTitle>
-                    <CardDescription className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                    <CardDescription
+                      className={
+                        theme === "light" ? "text-gray-500" : "text-white/70"
+                      }
+                    >
                       Wins vs. Losses over the last 6 months
                     </CardDescription>
                   </CardHeader>
@@ -1018,14 +1462,37 @@ export default function DashboardPage() {
                         <BarChart data={PERFORMANCE_DATA}>
                           <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke={theme === "light" ? "#e5e7eb" : "rgba(255, 255, 255, 0.1)"}
+                            stroke={
+                              theme === "light"
+                                ? "#e5e7eb"
+                                : "rgba(255, 255, 255, 0.1)"
+                            }
                           />
-                          <XAxis dataKey="name" stroke={theme === "light" ? "#6b7280" : "rgba(255, 255, 255, 0.7)"} />
-                          <YAxis stroke={theme === "light" ? "#6b7280" : "rgba(255, 255, 255, 0.7)"} />
+                          <XAxis
+                            dataKey="name"
+                            stroke={
+                              theme === "light"
+                                ? "#6b7280"
+                                : "rgba(255, 255, 255, 0.7)"
+                            }
+                          />
+                          <YAxis
+                            stroke={
+                              theme === "light"
+                                ? "#6b7280"
+                                : "rgba(255, 255, 255, 0.7)"
+                            }
+                          />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: theme === "light" ? "#fff" : "rgba(0, 0, 0, 0.8)",
-                              borderColor: theme === "light" ? "#e5e7eb" : "rgba(255, 255, 255, 0.1)",
+                              backgroundColor:
+                                theme === "light"
+                                  ? "#fff"
+                                  : "rgba(0, 0, 0, 0.8)",
+                              borderColor:
+                                theme === "light"
+                                  ? "#e5e7eb"
+                                  : "rgba(255, 255, 255, 0.1)",
                               color: theme === "light" ? "#111827" : "#fff",
                             }}
                           />
@@ -1039,43 +1506,114 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Leaderboard */}
-                <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+                <Card
+                  className={cn(
+                    theme === "light"
+                      ? "bg-white"
+                      : "bg-black/30 border-white/10"
+                  )}
+                >
                   <CardHeader>
-                    <CardTitle className={theme === "light" ? "text-gray-900" : "text-white"}>
+                    <CardTitle
+                      className={
+                        theme === "light" ? "text-gray-900" : "text-white"
+                      }
+                    >
                       Top Players Leaderboard
                     </CardTitle>
-                    <CardDescription className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                    <CardDescription
+                      className={
+                        theme === "light" ? "text-gray-500" : "text-white/70"
+                      }
+                    >
                       Rankings based on performance score
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Table>
                       <TableHeader>
-                        <TableRow className={theme === "light" ? "hover:bg-gray-100" : "hover:bg-white/5"}>
-                          <TableHead className={theme === "light" ? "text-gray-900" : "text-white"}>Rank</TableHead>
-                          <TableHead className={theme === "light" ? "text-gray-900" : "text-white"}>Player</TableHead>
-                          <TableHead className={theme === "light" ? "text-gray-900" : "text-white"}>Score</TableHead>
-                          <TableHead className={theme === "light" ? "text-gray-900" : "text-white"}>Win Rate</TableHead>
+                        <TableRow
+                          className={
+                            theme === "light"
+                              ? "hover:bg-gray-100"
+                              : "hover:bg-white/5"
+                          }
+                        >
+                          <TableHead
+                            className={
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            }
+                          >
+                            Rank
+                          </TableHead>
+                          <TableHead
+                            className={
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            }
+                          >
+                            Player
+                          </TableHead>
+                          <TableHead
+                            className={
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            }
+                          >
+                            Score
+                          </TableHead>
+                          <TableHead
+                            className={
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            }
+                          >
+                            Win Rate
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {LEADERBOARD_DATA.map((player) => (
                           <TableRow
                             key={player.rank}
-                            className={theme === "light" ? "hover:bg-gray-100" : "hover:bg-white/5"}
+                            className={
+                              theme === "light"
+                                ? "hover:bg-gray-100"
+                                : "hover:bg-white/5"
+                            }
                           >
                             <TableCell
-                              className={cn("font-medium", theme === "light" ? "text-gray-900" : "text-white")}
+                              className={cn(
+                                "font-medium",
+                                theme === "light"
+                                  ? "text-gray-900"
+                                  : "text-white"
+                              )}
                             >
                               {player.rank}
                             </TableCell>
-                            <TableCell className={theme === "light" ? "text-gray-700" : "text-white/90"}>
+                            <TableCell
+                              className={
+                                theme === "light"
+                                  ? "text-gray-700"
+                                  : "text-white/90"
+                              }
+                            >
                               {player.name}
                             </TableCell>
-                            <TableCell className={theme === "light" ? "text-gray-700" : "text-white/90"}>
+                            <TableCell
+                              className={
+                                theme === "light"
+                                  ? "text-gray-700"
+                                  : "text-white/90"
+                              }
+                            >
                               {player.score}
                             </TableCell>
-                            <TableCell className={theme === "light" ? "text-gray-700" : "text-white/90"}>
+                            <TableCell
+                              className={
+                                theme === "light"
+                                  ? "text-gray-700"
+                                  : "text-white/90"
+                              }
+                            >
                               {player.winRate}
                             </TableCell>
                           </TableRow>
@@ -1087,10 +1625,24 @@ export default function DashboardPage() {
               </div>
 
               {/* Upcoming Events */}
-              <Card className={cn(theme === "light" ? "bg-white" : "bg-black/30 border-white/10")}>
+              <Card
+                className={cn(
+                  theme === "light" ? "bg-white" : "bg-black/30 border-white/10"
+                )}
+              >
                 <CardHeader>
-                  <CardTitle className={theme === "light" ? "text-gray-900" : "text-white"}>Upcoming Events</CardTitle>
-                  <CardDescription className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                  <CardTitle
+                    className={
+                      theme === "light" ? "text-gray-900" : "text-white"
+                    }
+                  >
+                    Upcoming Events
+                  </CardTitle>
+                  <CardDescription
+                    className={
+                      theme === "light" ? "text-gray-500" : "text-white/70"
+                    }
+                  >
                     Gaming tournaments and competitions
                   </CardDescription>
                 </CardHeader>
@@ -1101,14 +1653,27 @@ export default function DashboardPage() {
                         key={event.id}
                         className={cn(
                           "p-4 rounded-lg border flex items-center justify-between",
-                          theme === "light" ? "bg-gray-50 border-gray-200" : "bg-white/5 border-white/10",
+                          theme === "light"
+                            ? "bg-gray-50 border-gray-200"
+                            : "bg-white/5 border-white/10"
                         )}
                       >
                         <div>
-                          <h3 className={cn("font-medium", theme === "light" ? "text-gray-900" : "text-white")}>
+                          <h3
+                            className={cn(
+                              "font-medium",
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            )}
+                          >
                             {event.name}
                           </h3>
-                          <p className={theme === "light" ? "text-gray-500" : "text-white/70"}>
+                          <p
+                            className={
+                              theme === "light"
+                                ? "text-gray-500"
+                                : "text-white/70"
+                            }
+                          >
                             {new Date(event.date).toLocaleDateString("en-US", {
                               weekday: "long",
                               year: "numeric",
@@ -1118,7 +1683,12 @@ export default function DashboardPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className={cn("font-medium", theme === "light" ? "text-gray-900" : "text-white")}>
+                          <p
+                            className={cn(
+                              "font-medium",
+                              theme === "light" ? "text-gray-900" : "text-white"
+                            )}
+                          >
                             {event.participants} Participants
                           </p>
                           <Button
@@ -1127,7 +1697,7 @@ export default function DashboardPage() {
                               "mt-2",
                               theme === "light"
                                 ? "bg-red-500 hover:bg-red-600 text-white"
-                                : "bg-red-600 hover:bg-red-700 text-white",
+                                : "bg-red-600 hover:bg-red-700 text-white"
                             )}
                           >
                             Register
@@ -1144,13 +1714,27 @@ export default function DashboardPage() {
       </div>
 
       {/* Modals */}
-      <GlassModal isOpen={activeModal === "salon"} onClose={closeModal} title={selectedItem?.name || ""} theme={theme}>
+      <GlassModal
+        isOpen={activeModal === "salon"}
+        onClose={closeModal}
+        title={selectedItem?.name || ""}
+        theme={theme}
+      >
         <div className="space-y-4">
-          <p className={cn(theme === "light" ? "text-gray-800" : "text-white/90")}>{selectedItem?.description}</p>
+          <p
+            className={cn(
+              theme === "light" ? "text-gray-800" : "text-white/90"
+            )}
+          >
+            {selectedItem?.description}
+          </p>
           <div>
             <label
               htmlFor="join-message"
-              className={cn("block text-sm font-medium mb-2", theme === "light" ? "text-gray-700" : "text-white/70")}
+              className={cn(
+                "block text-sm font-medium mb-2",
+                theme === "light" ? "text-gray-700" : "text-white/70"
+              )}
             >
               Request to Join
             </label>
@@ -1161,7 +1745,7 @@ export default function DashboardPage() {
                 "w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-red-500",
                 theme === "light"
                   ? "bg-gray-100 border-gray-200 text-gray-900"
-                  : "bg-white/5 border-white/10 text-white",
+                  : "bg-white/5 border-white/10 text-white"
               )}
               placeholder="Why do you want to join this salon?"
               value={joinRequestMessage}
@@ -1170,8 +1754,8 @@ export default function DashboardPage() {
           </div>
           <Button
             onClick={() => {
-              handleJoinRequest(selectedItem)
-              closeModal()
+              handleJoinRequest(selectedItem);
+              closeModal();
             }}
             className="w-full bg-red-500 hover:bg-red-600 text-white"
           >
@@ -1180,24 +1764,40 @@ export default function DashboardPage() {
         </div>
       </GlassModal>
 
-      <GlassModal isOpen={activeModal === "user"} onClose={closeModal} title={selectedItem?.name || ""} theme={theme}>
+      <GlassModal
+        isOpen={activeModal === "user"}
+        onClose={closeModal}
+        title={selectedItem?.name || ""}
+        theme={theme}
+      >
         <div className="text-center">
           <Avatar className="h-24 w-24 mx-auto mb-4">
             <AvatarImage src={selectedItem?.avatar} alt={selectedItem?.name} />
             <AvatarFallback
-              className={cn(theme === "light" ? "bg-gray-200 text-gray-700" : "bg-zinc-700 text-zinc-300")}
+              className={cn(
+                theme === "light"
+                  ? "bg-gray-200 text-gray-700"
+                  : "bg-zinc-700 text-zinc-300"
+              )}
             >
               {selectedItem?.name?.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
-          <p className={cn("mb-4", theme === "light" ? "text-gray-800" : "text-white/90")}>{selectedItem?.bio}</p>
+          <p
+            className={cn(
+              "mb-4",
+              theme === "light" ? "text-gray-800" : "text-white/90"
+            )}
+          >
+            {selectedItem?.bio}
+          </p>
           <Button
             onClick={() => {
               toast({
                 title: "Friend Request Sent",
                 description: `Your friend request to ${selectedItem?.name} has been sent.`,
-              })
-              closeModal()
+              });
+              closeModal();
             }}
             className="w-full bg-red-500 hover:bg-red-600 text-white"
           >
@@ -1206,6 +1806,5 @@ export default function DashboardPage() {
         </div>
       </GlassModal>
     </div>
-  )
+  );
 }
-
