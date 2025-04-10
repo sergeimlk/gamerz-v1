@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState, useRef, useEffect } from "react";
-import { UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -21,6 +20,7 @@ import {
   File,
   Image,
   Paperclip,
+  User,
   BarChart3,
   Activity,
   Trophy,
@@ -30,7 +30,6 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { GlassModal } from "@/components/glass-modal";
 import { toast } from "@/components/ui/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useTheme } from "@/contexts/theme-context";
@@ -64,7 +63,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { User } from "@/types/user";
 
 // Mock data
 const SALONS = [
@@ -299,8 +297,6 @@ export default function DashboardPage() {
   );
   const [activeView, setActiveView] = useState<"chat" | "stats">("chat");
   const { theme } = useTheme();
-  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("anonymousUsername");
@@ -402,28 +398,6 @@ export default function DashboardPage() {
     setActiveModal(null);
     setSelectedItem(null);
   };
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("/api/users");
-        if (!response.ok) throw new Error("Failed to fetch users");
-        const users = await response.json();
-        setOnlineUsers(users);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load users",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
 
   return (
     <div
@@ -569,52 +543,44 @@ export default function DashboardPage() {
                   </span>
                 </div>
                 <div className="space-y-1">
-                  {loading ? (
-                    <div className="flex items-center justify-center p-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                    </div>
-                  ) : (
-                    onlineUsers.map((user) => (
-                      <Button
-                        key={user._id}
-                        variant="ghost"
-                        className={cn(
-                          "w-full justify-start",
-                          theme === "light"
-                            ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                            : "text-white/70 hover:text-white hover:bg-white/10"
-                        )}
-                        onClick={() => openModal("user", user)}
-                      >
-                        <div className="relative mr-2">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.avatar} alt={user.pseudo} />
-                            <AvatarFallback
-                              className={cn(
-                                theme === "light"
-                                  ? "bg-gray-200 text-gray-700"
-                                  : "bg-zinc-700 text-zinc-300"
-                              )}
-                            >
-                              {user.pseudo.substring(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span
+                  {ONLINE_USERS.map((user) => (
+                    <Button
+                      key={user.id}
+                      variant="ghost"
+                      className={cn(
+                        "w-full justify-start",
+                        theme === "light"
+                          ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
+                      )}
+                      onClick={() => openModal("user", user)}
+                    >
+                      <div className="relative mr-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatar} alt={user.name} />
+                          <AvatarFallback
                             className={cn(
-                              "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2",
                               theme === "light"
-                                ? "border-white"
-                                : "border-black",
-                              user.status === "online" && "bg-green-500",
-                              user.status === "idle" && "bg-yellow-500",
-                              user.status === "dnd" && "bg-red-500"
+                                ? "bg-gray-200 text-gray-700"
+                                : "bg-zinc-700 text-zinc-300"
                             )}
-                          />
-                        </div>
-                        <span className="text-sm truncate">{user.pseudo}</span>
-                      </Button>
-                    ))
-                  )}
+                          >
+                            {user.name.substring(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span
+                          className={cn(
+                            "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2",
+                            theme === "light" ? "border-white" : "border-black",
+                            user.status === "online" && "bg-green-500",
+                            user.status === "idle" && "bg-yellow-500",
+                            user.status === "dnd" && "bg-red-500"
+                          )}
+                        />
+                      </div>
+                      <span className="text-sm truncate">{user.name}</span>
+                    </Button>
+                  ))}
                 </div>
               </div>
             </ScrollArea>
@@ -666,7 +632,7 @@ export default function DashboardPage() {
                   asChild
                 >
                   <Link href="/profile">
-                    <UserIcon className="h-5 w-5" />
+                    <User className="h-5 w-5" />
                   </Link>
                 </Button>
                 <Button
@@ -1008,6 +974,8 @@ export default function DashboardPage() {
                         {file.name}
                       </span>
                       <button
+                        type="button"
+                        aria-label="Remove file"
                         className={cn(
                           "absolute top-1 right-1",
                           theme === "light"
@@ -1036,6 +1004,7 @@ export default function DashboardPage() {
             >
               <form onSubmit={handleSendMessage} className="flex items-center">
                 <input
+                  aria-label="File upload"
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
@@ -1712,99 +1681,6 @@ export default function DashboardPage() {
           </ScrollArea>
         )}
       </div>
-
-      {/* Modals */}
-      <GlassModal
-        isOpen={activeModal === "salon"}
-        onClose={closeModal}
-        title={selectedItem?.name || ""}
-        theme={theme}
-      >
-        <div className="space-y-4">
-          <p
-            className={cn(
-              theme === "light" ? "text-gray-800" : "text-white/90"
-            )}
-          >
-            {selectedItem?.description}
-          </p>
-          <div>
-            <label
-              htmlFor="join-message"
-              className={cn(
-                "block text-sm font-medium mb-2",
-                theme === "light" ? "text-gray-700" : "text-white/70"
-              )}
-            >
-              Request to Join
-            </label>
-            <textarea
-              id="join-message"
-              rows={3}
-              className={cn(
-                "w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-red-500",
-                theme === "light"
-                  ? "bg-gray-100 border-gray-200 text-gray-900"
-                  : "bg-white/5 border-white/10 text-white"
-              )}
-              placeholder="Why do you want to join this salon?"
-              value={joinRequestMessage}
-              onChange={(e) => setJoinRequestMessage(e.target.value)}
-            ></textarea>
-          </div>
-          <Button
-            onClick={() => {
-              handleJoinRequest(selectedItem);
-              closeModal();
-            }}
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
-          >
-            Send Join Request
-          </Button>
-        </div>
-      </GlassModal>
-
-      <GlassModal
-        isOpen={activeModal === "user"}
-        onClose={closeModal}
-        title={selectedItem?.name || ""}
-        theme={theme}
-      >
-        <div className="text-center">
-          <Avatar className="h-24 w-24 mx-auto mb-4">
-            <AvatarImage src={selectedItem?.avatar} alt={selectedItem?.name} />
-            <AvatarFallback
-              className={cn(
-                theme === "light"
-                  ? "bg-gray-200 text-gray-700"
-                  : "bg-zinc-700 text-zinc-300"
-              )}
-            >
-              {selectedItem?.name?.substring(0, 2)}
-            </AvatarFallback>
-          </Avatar>
-          <p
-            className={cn(
-              "mb-4",
-              theme === "light" ? "text-gray-800" : "text-white/90"
-            )}
-          >
-            {selectedItem?.bio}
-          </p>
-          <Button
-            onClick={() => {
-              toast({
-                title: "Friend Request Sent",
-                description: `Your friend request to ${selectedItem?.name} has been sent.`,
-              });
-              closeModal();
-            }}
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
-          >
-            Add Friend
-          </Button>
-        </div>
-      </GlassModal>
     </div>
   );
 }

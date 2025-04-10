@@ -1,43 +1,35 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, MessageSquare, Users, Settings } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTheme } from "@/contexts/theme-context";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme-toggle";
+import type React from "react"
+
+import { useState } from "react"
+import Link from "next/link"
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ArrowRight, MessageSquare, Users, Settings } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useTheme } from "@/contexts/theme-context"
+import { cn } from "@/lib/utils"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
-  const { theme } = useTheme();
-  const [username, setUsername] = useState("");
-  const router = useRouter();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Return a simple loading state or null while mounting
-  if (!mounted) {
-    return <div className="min-h-screen" />; // Return minimal layout to prevent layout shift
-  }
+  const [username, setUsername] = useState("")
+  const router = useRouter()
+  const { theme } = useTheme()
 
   const handleSkip = () => {
-    router.push("/dashboard");
-  };
+    router.push("/dashboard")
+  }
 
   const handleAnonymousLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (username.trim()) {
       // In a real app, you'd want to store this username in a more persistent way
-      localStorage.setItem("anonymousUsername", username);
-      router.push("/dashboard");
+      localStorage.setItem("anonymousUsername", username)
+      router.push("/dashboard")
     }
-  };
+  }
 
   return (
     <div
@@ -45,7 +37,7 @@ export default function HomePage() {
         "min-h-screen overflow-hidden",
         theme === "light"
           ? "bg-gradient-to-br from-gray-100 via-red-50 to-gray-100 text-gray-900"
-          : "bg-gradient-to-br from-black via-red-900 to-black text-white"
+          : "bg-gradient-to-br from-black via-red-900 to-black text-white",
       )}
     >
       <div className="absolute top-4 right-4 z-10">
@@ -62,19 +54,11 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             Welcome to <span className="text-red-500">GamErz</span>
           </h1>
-          <p
-            className={cn(
-              "text-xl md:text-2xl mb-12 max-w-2xl",
-              theme === "light" ? "text-gray-700" : "text-white"
-            )}
-          >
+          <p className={cn("text-xl md:text-2xl mb-12 max-w-2xl", theme === "light" ? "text-gray-700" : "text-white")}>
             Connect, chat, and game with fellow enthusiasts in real-time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button
-              asChild
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
-            >
+            <Button asChild className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg">
               <Link href="/login">
                 Login <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
@@ -84,7 +68,7 @@ export default function HomePage() {
               variant="outline"
               className={cn(
                 "border-red-500 text-red-500 px-8 py-3 text-lg",
-                theme === "light" ? "hover:bg-red-50" : "hover:bg-red-950"
+                theme === "light" ? "hover:bg-red-50" : "hover:bg-red-950",
               )}
             >
               <Link href="/signup">
@@ -93,10 +77,7 @@ export default function HomePage() {
             </Button>
           </div>
           <div className="w-full max-w-md">
-            <form
-              onSubmit={handleAnonymousLogin}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={handleAnonymousLogin} className="flex flex-col gap-4">
               <Input
                 type="text"
                 placeholder="Enter a username to join anonymously"
@@ -105,7 +86,7 @@ export default function HomePage() {
                 className={cn(
                   theme === "light"
                     ? "bg-white/70 border-gray-200 text-gray-900 placeholder:text-gray-500"
-                    : "bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                    : "bg-white/10 border-white/20 text-white placeholder:text-white/50",
                 )}
               />
               <Button
@@ -127,7 +108,7 @@ export default function HomePage() {
               "mt-4",
               theme === "light"
                 ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100/50"
-                : "text-white/70 hover:text-white hover:bg-white/10"
+                : "text-white/70 hover:text-white hover:bg-white/10",
             )}
           >
             Skip and explore
@@ -141,43 +122,19 @@ export default function HomePage() {
           className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           <FeatureCard
-            icon={
-              <MessageSquare
-                className={
-                  theme === "light"
-                    ? "h-12 w-12 text-red-500"
-                    : "h-12 w-12 text-red-500"
-                }
-              />
-            }
+            icon={<MessageSquare className={theme === "light" ? "h-12 w-12 text-red-500" : "h-12 w-12 text-red-500"} />}
             title="Real-time Chat"
             description="Connect with other gamers in topic-based salons with instant messaging."
             theme={theme}
           />
           <FeatureCard
-            icon={
-              <Users
-                className={
-                  theme === "light"
-                    ? "h-12 w-12 text-red-500"
-                    : "h-12 w-12 text-red-500"
-                }
-              />
-            }
+            icon={<Users className={theme === "light" ? "h-12 w-12 text-red-500" : "h-12 w-12 text-red-500"} />}
             title="Community"
             description="Join a vibrant community of like-minded gamers from around the world."
             theme={theme}
           />
           <FeatureCard
-            icon={
-              <Settings
-                className={
-                  theme === "light"
-                    ? "h-12 w-12 text-red-500"
-                    : "h-12 w-12 text-red-500"
-                }
-              />
-            }
+            icon={<Settings className={theme === "light" ? "h-12 w-12 text-red-500" : "h-12 w-12 text-red-500"} />}
             title="Customizable Experience"
             description="Tailor your gaming environment to suit your preferences."
             theme={theme}
@@ -205,7 +162,7 @@ export default function HomePage() {
         />
       </div>
     </div>
-  );
+  )
 }
 
 function FeatureCard({
@@ -214,33 +171,23 @@ function FeatureCard({
   description,
   theme,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  theme: "light" | "dark";
+  icon: React.ReactNode
+  title: string
+  description: string
+  theme: "light" | "dark"
 }) {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
       className={cn(
         "p-6 rounded-lg border transition-all duration-300 hover:border-red-500 hover:shadow-lg hover:shadow-red-500/20",
-        theme === "light"
-          ? "bg-white/80 border-gray-200"
-          : "bg-white/5 border-white/10"
+        theme === "light" ? "bg-white/80 border-gray-200" : "bg-white/5 border-white/10",
       )}
     >
       <div className="mb-4">{icon}</div>
-      <h3
-        className={cn(
-          "text-xl font-bold mb-2",
-          theme === "light" ? "text-gray-900" : "text-white"
-        )}
-      >
-        {title}
-      </h3>
-      <p className={theme === "light" ? "text-gray-600" : "text-white/70"}>
-        {description}
-      </p>
+      <h3 className={cn("text-xl font-bold mb-2", theme === "light" ? "text-gray-900" : "text-white")}>{title}</h3>
+      <p className={theme === "light" ? "text-gray-600" : "text-white/70"}>{description}</p>
     </motion.div>
-  );
+  )
 }
+

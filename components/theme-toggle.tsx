@@ -1,31 +1,22 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/theme-context"
+import { Switch } from "@/components/ui/switch"
+import { Sun, Moon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+interface ThemeToggleProps {
+  className?: string
+}
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null; // Prevent rendering until client-side
-  }
+export function ThemeToggle({ className }: ThemeToggleProps) {
+  const { theme, toggleTheme } = useTheme()
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-    >
-      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  );
+    <div className={cn("flex items-center space-x-2", className)}>
+      <Switch checked={theme === "dark"} onCheckedChange={toggleTheme} className="data-[state=checked]:bg-red-500" />
+      {theme === "light" ? <Sun className="h-4 w-4 text-gray-700" /> : <Moon className="h-4 w-4 text-gray-300" />}
+    </div>
+  )
 }
+
