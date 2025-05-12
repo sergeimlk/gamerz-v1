@@ -22,6 +22,7 @@ interface JoinRequestDialogProps {
     id: number;
     name: string;
     description: string;
+    requiresApproval: boolean;
   } | null;
 }
 
@@ -69,7 +70,7 @@ export function JoinRequestDialog({
             Demande d'adhésion
           </DialogTitle>
           <DialogDescription className={theme === "light" ? "text-gray-500" : "text-zinc-400"}>
-            {salon && `Envoyez une demande pour rejoindre le salon #${salon.name}. Expliquez pourquoi vous souhaitez rejoindre ce salon.`}
+            {salon && `Envoyez une demande pour rejoindre le salon #${salon.name}. Ce salon nécessite l'approbation d'un administrateur.`}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

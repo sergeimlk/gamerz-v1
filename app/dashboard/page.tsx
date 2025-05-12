@@ -26,6 +26,7 @@ import {
   Trophy,
   Calendar,
   Target,
+  UserPlus,
 } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
@@ -72,48 +73,21 @@ const SALONS = [
     name: "general",
     unread: true,
     description: "General discussion for all gamers",
+    requiresApproval: false,
   },
   {
     id: 2,
-    name: "gaming-news",
-    unread: false,
-    description: "Latest updates in the gaming world",
-  },
-  {
-    id: 3,
-    name: "valorant",
-    unread: false,
-    description: "Valorant strategies and team-ups",
-  },
-  {
-    id: 4,
     name: "minecraft",
     unread: false,
     description: "Minecraft building and survival",
+    requiresApproval: true,
   },
   {
-    id: 5,
-    name: "apex-legends",
-    unread: true,
-    description: "Apex Legends tactics and squads",
-  },
-  {
-    id: 6,
-    name: "call-of-duty",
-    unread: false,
-    description: "Call of Duty multiplayer and Warzone",
-  },
-  {
-    id: 7,
+    id: 3,
     name: "fortnite",
     unread: false,
     description: "Fortnite battles and building",
-  },
-  {
-    id: 8,
-    name: "league-of-legends",
-    unread: false,
-    description: "LoL champions and meta discussions",
+    requiresApproval: true,
   },
 ];
 
@@ -381,6 +355,18 @@ export default function DashboardPage() {
   };
 
   const openJoinDialog = (salon: (typeof SALONS)[0]) => {
+    // Si le salon ne nécessite pas d'approbation, rejoindre directement
+    if (!salon.requiresApproval) {
+      toast({
+        title: "Salon rejoint",
+        description: `Vous avez rejoint le salon #${salon.name}.`,
+      });
+      setActiveSalon(salon);
+      setActiveView("chat");
+      return;
+    }
+    
+    // Sinon, ouvrir le dialogue de demande d'adhésion
     setSelectedSalonForJoin(salon);
     setIsJoinDialogOpen(true);
   };
@@ -526,9 +512,9 @@ export default function DashboardPage() {
                             : "text-white/50 hover:text-white hover:bg-white/10"
                         )}
                         onClick={() => openJoinDialog(salon)}
-                        title="Rejoindre ce salon"
+                        title={salon.requiresApproval ? "Demander à rejoindre ce salon" : "Rejoindre ce salon"}
                       >
-                        <Users className="h-4 w-4" />
+                        {salon.requiresApproval ? <UserPlus className="h-4 w-4" /> : <Users className="h-4 w-4" />}
                       </Button>
                     </div>
                   ))}
