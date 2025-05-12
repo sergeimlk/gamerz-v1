@@ -748,10 +748,13 @@ export default function DashboardPage() {
                 <div 
                   ref={notificationsRef}
                   className={cn(
-                    "fixed right-4 top-16 w-80 rounded-md shadow-lg z-[99999]",
+                    "fixed right-4 top-16 w-80 rounded-md shadow-lg z-[999999]",
                     theme === "light" ? "bg-white border border-gray-200" : "bg-zinc-900 border border-zinc-800"
                   )}
-                  style={{ boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)" }}
+                  style={{ 
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)", 
+                    pointerEvents: "auto"
+                  }}
                 >
                   <div className={cn(
                     "p-3 border-b",
@@ -946,12 +949,12 @@ export default function DashboardPage() {
                       {/* File Attachments */}
                       {message.attachments &&
                         message.attachments.length > 0 && (
-                          <div className="space-y-2 mt-2">
+                          <div className="space-y-2 mt-2 relative z-[-1]">
                             {message.attachments.map((attachment) => (
                               <div
                                 key={attachment.id}
                                 className={cn(
-                                  "rounded-md overflow-hidden border",
+                                  "rounded-md overflow-hidden border relative z-[-1]",
                                   theme === "light"
                                     ? "border-gray-200 bg-white"
                                     : "border-white/10 bg-white/5 backdrop-blur-sm"
