@@ -91,6 +91,8 @@ const SALONS = [
   },
 ];
 
+// Liste des joueurs en ligne - ne contient que GamerPro99 par défaut
+// Les autres joueurs seront ajoutés dynamiquement lorsqu'ils s'inscriront et se connecteront
 const ONLINE_USERS = [
   {
     id: 1,
@@ -98,55 +100,6 @@ const ONLINE_USERS = [
     status: "online",
     avatar: "/placeholder.svg?height=40&width=40",
     bio: "Competitive FPS player, always looking for a challenge!",
-  },
-  {
-    id: 2,
-    name: "NinjaWarrior",
-    status: "online",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "Stealth game enthusiast and speedrunner",
-  },
-  {
-    id: 3,
-    name: "PixelQueen",
-    status: "online",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "Indie game developer and pixel art creator",
-  },
-  {
-    id: 4,
-    name: "FragMaster",
-    status: "idle",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "FPS veteran, specializing in tactical shooters",
-  },
-  {
-    id: 5,
-    name: "LootHunter",
-    status: "dnd",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "RPG fanatic, always on the hunt for rare items",
-  },
-  {
-    id: 6,
-    name: "SniperElite",
-    status: "online",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "Precision aiming expert, long-range specialist",
-  },
-  {
-    id: 7,
-    name: "RespawnHero",
-    status: "online",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "Battle royale champion, never gives up",
-  },
-  {
-    id: 8,
-    name: "QuestMaster",
-    status: "idle",
-    avatar: "/placeholder.svg?height=40&width=40",
-    bio: "MMO guild leader, expert in raid strategies",
   },
 ];
 
@@ -184,6 +137,7 @@ const NOTIFICATIONS = [
   },
 ];
 
+// Messages - Adaptés pour n'avoir que GamerPro99 comme utilisateur actif
 const MESSAGES = [
   {
     id: 1,
@@ -195,25 +149,7 @@ const MESSAGES = [
   },
   {
     id: 2,
-    user: "NinjaWarrior",
-    avatar: "/placeholder.svg?height=40&width=40",
-    content:
-      "Yeah, the new agent is pretty cool. I've been playing with her all morning.",
-    timestamp: "Today at 10:25 AM",
-    attachments: [],
-  },
-  {
-    id: 3,
-    user: "PixelQueen",
-    avatar: "/placeholder.svg?height=40&width=40",
-    content:
-      "I'm still downloading the update. My internet is so slow today 😭",
-    timestamp: "Today at 10:30 AM",
-    attachments: [],
-  },
-  {
-    id: 4,
-    user: "FragMaster",
+    user: "GamerPro99",
     avatar: "/placeholder.svg?height=40&width=40",
     content: "The new map is amazing! So many strategic spots for ambushes.",
     timestamp: "Today at 10:32 AM",
@@ -227,8 +163,8 @@ const MESSAGES = [
     ],
   },
   {
-    id: 5,
-    user: "LootHunter",
+    id: 3,
+    user: "GamerPro99",
     avatar: "/placeholder.svg?height=40&width=40",
     content: "Anyone want to team up for some ranked matches later?",
     timestamp: "Today at 10:35 AM",
@@ -291,6 +227,9 @@ const UPCOMING_EVENTS = [
 const COLORS = ["#FF4560", "#00E396", "#775DD0", "#FEB019", "#4CAF50"];
 
 export default function DashboardPage() {
+  const { theme } = useTheme();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeSalon, setActiveSalon] = useState(SALONS[0]);
   const [messageInput, setMessageInput] = useState("");
@@ -302,13 +241,23 @@ export default function DashboardPage() {
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [selectedSalonForJoin, setSelectedSalonForJoin] = useState<(typeof SALONS)[0] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const isTablet = useMediaQuery("(max-width: 1024px)");
-  const [anonymousUsername, setAnonymousUsername] = useState<string | null>(
-    null
-  );
+  const [anonymousUsername, setAnonymousUsername] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<"chat" | "stats">("chat");
-  const { theme } = useTheme();
+  
+  // État pour stocker les utilisateurs en ligne (initialisé avec ONLINE_USERS)
+  // Seul GamerPro99 est présent par défaut, les autres utilisateurs seront ajoutés dynamiquement
+  const [onlineUsers, setOnlineUsers] = useState(ONLINE_USERS);
+  const [unreadNotifications, setUnreadNotifications] = useState(
+    NOTIFICATIONS.filter((n) => !n.read).length
+  );
+  // Variables pour la gestion des modales
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"salon" | "user">("salon");
+  const [modalItem, setModalItem] = useState<any>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("anonymousUsername");
@@ -410,40 +359,16 @@ export default function DashboardPage() {
     setSelectedSalonForJoin(null);
   };
 
-  const [activeModal, setActiveModal] = useState<"salon" | "user" | null>(null);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const notificationsRef = useRef<HTMLDivElement>(null);
-  const notificationButtonRef = useRef<HTMLButtonElement>(null);
-  
-  // Effet pour fermer le panneau de notifications lorsque l'utilisateur clique en dehors
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        showNotifications &&
-        notificationsRef.current &&
-        notificationButtonRef.current &&
-        !notificationsRef.current.contains(event.target as Node) &&
-        !notificationButtonRef.current.contains(event.target as Node)
-      ) {
-        setShowNotifications(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showNotifications]);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-
   const openModal = (type: "salon" | "user", item: any) => {
-    setActiveModal(type);
-    setSelectedItem(item);
+    setIsModalOpen(true);
+    setModalType(type);
+    setModalItem(item);
   };
 
   const closeModal = () => {
-    setActiveModal(null);
-    setSelectedItem(null);
+    setIsModalOpen(false);
+    setModalType("salon");
+    setModalItem(null);
   };
 
   return (
@@ -601,11 +526,11 @@ export default function DashboardPage() {
                       theme === "light" ? "text-gray-500" : "text-white/50"
                     )}
                   >
-                    {ONLINE_USERS.length}
+                    {onlineUsers.length}
                   </span>
                 </div>
                 <div className="space-y-1">
-                  {ONLINE_USERS.map((user) => (
+                  {onlineUsers.map((user) => (
                     <Button
                       key={user.id}
                       variant="ghost"
@@ -823,9 +748,10 @@ export default function DashboardPage() {
                 <div 
                   ref={notificationsRef}
                   className={cn(
-                    "absolute right-0 top-full mt-2 w-80 rounded-md shadow-lg z-[9999]",
+                    "fixed right-4 top-16 w-80 rounded-md shadow-lg z-[99999]",
                     theme === "light" ? "bg-white border border-gray-200" : "bg-zinc-900 border border-zinc-800"
                   )}
+                  style={{ boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)" }}
                 >
                   <div className={cn(
                     "p-3 border-b",
