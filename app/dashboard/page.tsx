@@ -732,15 +732,16 @@ export default function DashboardPage() {
                 variant="ghost"
                 size="icon"
                 className={cn(
+                  "p-2", // Augmenter le padding pour accommoder l'icône plus grande
                   theme === "light"
                     ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                     : "text-white/70 hover:text-white hover:bg-white/10"
                 )}
                 onClick={() => setShowNotifications(!showNotifications)}
               >
-                <Bell className="h-5 w-5" />
+                <Bell className="h-10 w-10" /> {/* Icône deux fois plus grande */}
                 {NOTIFICATIONS.some(notif => !notif.read) && (
-                  <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                  <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500" />
                 )}
               </Button>
               
@@ -748,7 +749,7 @@ export default function DashboardPage() {
                 <div 
                   ref={notificationsRef}
                   className={cn(
-                    "fixed right-4 top-16 w-80 rounded-md shadow-lg z-[999999]",
+                    "fixed right-4 top-20 w-80 rounded-md shadow-lg z-[999999]", // Ajusté la position top pour l'icône plus grande
                     theme === "light" ? "bg-white border border-gray-200" : "bg-zinc-900 border border-zinc-800"
                   )}
                   style={{ 
@@ -782,10 +783,26 @@ export default function DashboardPage() {
                       {NOTIFICATIONS.filter(notif => !notif.read).length > 0 ? (
                         <ul className="space-y-2">
                           {NOTIFICATIONS.filter(notif => !notif.read).map(notification => (
-                            <li key={notification.id} className={cn(
-                              "p-2 rounded-md flex items-start",
-                              theme === "light" ? "hover:bg-gray-100" : "hover:bg-zinc-800"
-                            )}>
+                            <li 
+                              key={notification.id} 
+                              className={cn(
+                                "p-2 rounded-md flex items-start cursor-pointer",
+                                theme === "light" ? "hover:bg-gray-100" : "hover:bg-zinc-800"
+                              )}
+                              onClick={() => {
+                                // Marquer cette notification comme lue
+                                const updatedNotifications = [...NOTIFICATIONS];
+                                const index = updatedNotifications.findIndex(n => n.id === notification.id);
+                                if (index !== -1) {
+                                  updatedNotifications[index] = { ...updatedNotifications[index], read: true };
+                                  // Dans une application réelle, vous enverriez cette mise à jour au serveur
+                                  toast({
+                                    title: "Notification lue",
+                                    description: "La notification a été marquée comme lue.",
+                                  });
+                                }
+                              }}
+                            >
                               <div className="flex-1">
                                 <p className={cn(
                                   "text-sm",
@@ -853,11 +870,17 @@ export default function DashboardPage() {
                       variant="ghost" 
                       size="sm"
                       className={cn(
-                        "text-xs",
-                        theme === "light" ? "text-gray-700" : "text-zinc-300"
+                        "text-xs font-medium", // Ajout de font-medium pour meilleure visibilité
+                        theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-zinc-300 hover:bg-zinc-800"
                       )}
                       onClick={() => {
                         // Marquer toutes les notifications comme lues
+                        const updatedNotifications = NOTIFICATIONS.map(notif => ({
+                          ...notif,
+                          read: true
+                        }));
+                        // Dans une application réelle, vous enverriez cette mise à jour au serveur
+                        setUnreadNotifications(0);
                         toast({
                           title: "Notifications",
                           description: "Toutes les notifications ont été marquées comme lues.",
