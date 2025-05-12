@@ -18,7 +18,7 @@ import {
   Send,
   Bell,
   File,
-  Image,
+  Image as ImageIcon,
   Paperclip,
   User,
   BarChart3,
@@ -31,6 +31,7 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { JoinRequestDialog } from "@/components/join-request-dialog";
@@ -393,15 +394,31 @@ export default function DashboardPage() {
         {sidebarOpen && (
           <>
             <div className="p-4 flex items-center justify-between border-b border-gray-200 dark:border-white/10">
-              <Link
-                href="/home"
-                className={cn(
-                  "text-xl font-bold hover:text-red-500 transition-colors",
-                  theme === "light" ? "text-gray-900" : "text-white"
-                )}
-              >
-                <span className="text-red-500">GamErz</span>
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/dashboard"
+                  className="relative group"
+                >
+                  <div className="w-8 h-8 transition-transform duration-300 transform group-hover:scale-125">
+                    <Image 
+                      src="/GRond.png" 
+                      alt="Logo Gamerz" 
+                      width={32} 
+                      height={32} 
+                      className="object-contain"
+                    />
+                  </div>
+                </Link>
+                <Link
+                  href="/home"
+                  className={cn(
+                    "text-xl font-bold hover:text-red-500 transition-colors",
+                    theme === "light" ? "text-gray-900" : "text-white"
+                  )}
+                >
+                  <span className="text-red-500">GamErz</span>
+                </Link>
+              </div>
               <ThemeToggle />
               {(isMobile || isTablet) && (
                 <Button

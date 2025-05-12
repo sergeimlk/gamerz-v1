@@ -2,10 +2,11 @@
 
 import type React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageSquare, Users, Activity, Star, ArrowLeft } from "lucide-react"
+import { MessageSquare, Users, Activity, Star } from "lucide-react"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -19,15 +20,22 @@ export default function HomePage() {
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
-            size="icon"
             className={cn(
-              "rounded-full",
-              theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-white hover:bg-white/10"
+              "p-0 h-auto", // Suppression des contraintes de taille pour le bouton
+              theme === "light" ? "hover:bg-gray-100" : "hover:bg-white/10"
             )}
             asChild
           >
-            <Link href="/dashboard" title="Retour au dashboard">
-              <ArrowLeft className="h-5 w-5" />
+            <Link href="/dashboard" title="Retour au dashboard principal">
+              <div className="relative w-12 h-12 flex items-center justify-center">
+                <Image 
+                  src="/GRond.png" 
+                  alt="Logo Gamerz" 
+                  width={48} 
+                  height={48} 
+                  className="object-contain"
+                />
+              </div>
             </Link>
           </Button>
           <div>
