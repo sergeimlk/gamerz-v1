@@ -1,39 +1,46 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     // Simulate login process
     setTimeout(() => {
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1500)
-  }
+      setIsLoading(false);
+      router.push("/dashboard");
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
@@ -50,9 +57,13 @@ export default function LoginPage() {
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
-            <CardTitle className="text-2xl text-white">Login to GamErz</CardTitle>
+            <CardTitle className="text-2xl text-white">
+              Login to GamErz
+            </CardTitle>
           </div>
-          <CardDescription className="text-zinc-400">Enter your credentials to access your account</CardDescription>
+          <CardDescription className="text-zinc-400">
+            Enter your credentials to access your account
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -76,7 +87,10 @@ export default function LoginPage() {
                 <Label htmlFor="password" className="text-zinc-300">
                   Password
                 </Label>
-                <Link href="/forgot-password" className="text-xs text-red-500 hover:text-red-400">
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-red-500 hover:text-red-400"
+                >
                   Forgot password?
                 </Link>
               </div>
@@ -93,7 +107,11 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white"
+              disabled={isLoading}
+            >
               {isLoading ? "Logging in..." : "Login"}
             </Button>
             <p className="text-sm text-zinc-400 text-center">
@@ -106,6 +124,5 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }
-

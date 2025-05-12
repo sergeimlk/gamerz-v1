@@ -13,9 +13,12 @@ import { toast } from "@/components/ui/use-toast"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 export default function ProfilePage() {
   const { theme } = useTheme()
+  const router = useRouter()
   const [profile, setProfile] = useState({
     username: "GamerPro99",
     email: "gamerpro99@example.com",
@@ -43,7 +46,15 @@ export default function ProfilePage() {
 
   return (
     <div className={cn("min-h-screen p-8", theme === "light" ? "bg-gray-50 text-gray-900" : "bg-black text-white")}>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between mb-4">
+        <Button 
+          variant="ghost" 
+          className="flex items-center gap-2" 
+          onClick={() => router.push('/dashboard')}
+        >
+          <ArrowLeft size={16} />
+          Retour au dashboard
+        </Button>
         <ThemeToggle />
       </div>
 

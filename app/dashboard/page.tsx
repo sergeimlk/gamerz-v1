@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { JoinRequestDialog } from "@/components/join-request-dialog";
 import { useTheme } from "@/contexts/theme-context";
 import {
   AreaChart,
@@ -288,7 +289,10 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState(MESSAGES);
   const [fileUploads, setFileUploads] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [joinRequestMessage, setJoinRequestMessage] = useState("");
+  
+  // État pour la demande d'adhésion
+  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+  const [selectedSalonForJoin, setSelectedSalonForJoin] = useState<(typeof SALONS)[0] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
@@ -376,14 +380,14 @@ export default function DashboardPage() {
     }
   };
 
-  const handleJoinRequest = (salon: (typeof SALONS)[0]) => {
-    // Here you would typically send this request to your backend
-    console.log(`Join request for ${salon.name}: ${joinRequestMessage}`);
-    toast({
-      title: "Join Request Sent",
-      description: `Your request to join ${salon.name} has been sent to the admin.`,
-    });
-    setJoinRequestMessage("");
+  const openJoinDialog = (salon: (typeof SALONS)[0]) => {
+    setSelectedSalonForJoin(salon);
+    setIsJoinDialogOpen(true);
+  };
+
+  const closeJoinDialog = () => {
+    setIsJoinDialogOpen(false);
+    setSelectedSalonForJoin(null);
   };
 
   const [activeModal, setActiveModal] = useState<"salon" | "user" | null>(null);
@@ -488,30 +492,45 @@ export default function DashboardPage() {
                 </h2>
                 <div className="space-y-1">
                   {SALONS.map((salon) => (
-                    <Button
-                      key={salon.id}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start",
-                        theme === "light"
-                          ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                          : "text-white/70 hover:text-white hover:bg-white/10",
-                        activeSalon.id === salon.id &&
-                          (theme === "light"
-                            ? "bg-gray-100 text-gray-900"
-                            : "bg-white/20 text-white")
-                      )}
-                      onClick={() => {
-                        setActiveSalon(salon);
-                        setActiveView("chat");
-                      }}
-                    >
-                      <Hash className="mr-2 h-4 w-4" />
-                      <span className="truncate">{salon.name}</span>
-                      {salon.unread && (
-                        <span className="ml-auto flex h-2 w-2 rounded-full bg-red-500" />
-                      )}
-                    </Button>
+                    <div key={salon.id} className="flex items-center space-x-1 mb-1">
+                      <Button
+                        variant="ghost"
+                        className={cn(
+                          "flex-1 justify-start",
+                          theme === "light"
+                            ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                            : "text-white/70 hover:text-white hover:bg-white/10",
+                          activeSalon.id === salon.id &&
+                            (theme === "light"
+                              ? "bg-gray-100 text-gray-900"
+                              : "bg-white/20 text-white")
+                        )}
+                        onClick={() => {
+                          setActiveSalon(salon);
+                          setActiveView("chat");
+                        }}
+                      >
+                        <Hash className="mr-2 h-4 w-4" />
+                        <span className="truncate">{salon.name}</span>
+                        {salon.unread && (
+                          <span className="ml-auto flex h-2 w-2 rounded-full bg-red-500" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={cn(
+                          "flex-shrink-0",
+                          theme === "light"
+                            ? "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                            : "text-white/50 hover:text-white hover:bg-white/10"
+                        )}
+                        onClick={() => openJoinDialog(salon)}
+                        title="Rejoindre ce salon"
+                      >
+                        <Users className="h-4 w-4" />
+                      </Button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -1681,6 +1700,13 @@ export default function DashboardPage() {
           </ScrollArea>
         )}
       </div>
+
+      {/* Dialog pour la demande d'adhésion */}
+      <JoinRequestDialog 
+        isOpen={isJoinDialogOpen} 
+        onClose={closeJoinDialog} 
+        salon={selectedSalonForJoin}
+      />
     </div>
   );
 }
