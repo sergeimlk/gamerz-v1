@@ -150,6 +150,40 @@ const ONLINE_USERS = [
   },
 ];
 
+// Notifications factices pour l'exemple
+const NOTIFICATIONS = [
+  {
+    id: 1,
+    content: "Nouvelle demande d'ami de GamerX42",
+    timestamp: "Il y a 5 minutes",
+    read: false,
+  },
+  {
+    id: 2,
+    content: "Votre demande pour rejoindre le salon Minecraft a été acceptée",
+    timestamp: "Il y a 2 heures",
+    read: false,
+  },
+  {
+    id: 3,
+    content: "ProGamer99 vous a mentionné dans le salon general",
+    timestamp: "Il y a 3 heures",
+    read: true,
+  },
+  {
+    id: 4,
+    content: "Mise à jour de l'application disponible",
+    timestamp: "Il y a 1 jour",
+    read: true,
+  },
+  {
+    id: 5,
+    content: "Bienvenue sur Gamerz! Complétez votre profil",
+    timestamp: "Il y a 3 jours",
+    read: true,
+  },
+];
+
 const MESSAGES = [
   {
     id: 1,
@@ -377,6 +411,29 @@ export default function DashboardPage() {
   };
 
   const [activeModal, setActiveModal] = useState<"salon" | "user" | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Effet pour fermer le panneau de notifications lorsque l'utilisateur clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showNotifications &&
+        notificationsRef.current &&
+        notificationButtonRef.current &&
+        !notificationsRef.current.contains(event.target as Node) &&
+        !notificationButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const openModal = (type: "salon" | "user", item: any) => {
@@ -744,17 +801,148 @@ export default function DashboardPage() {
             )}
           </div>
           <div className="ml-auto flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                theme === "light"
-                  ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+            <div className="relative">
+              <Button
+                ref={notificationButtonRef}
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  theme === "light"
+                    ? "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                    : "text-white/70 hover:text-white hover:bg-white/10"
+                )}
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell className="h-5 w-5" />
+                {NOTIFICATIONS.some(notif => !notif.read) && (
+                  <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                )}
+              </Button>
+              
+              {showNotifications && (
+                <div 
+                  ref={notificationsRef}
+                  className={cn(
+                    "absolute right-0 top-full mt-2 w-80 rounded-md shadow-lg z-[9999]",
+                    theme === "light" ? "bg-white border border-gray-200" : "bg-zinc-900 border border-zinc-800"
+                  )}
+                >
+                  <div className={cn(
+                    "p-3 border-b",
+                    theme === "light" ? "border-gray-200" : "border-zinc-800"
+                  )}>
+                    <h3 className={cn(
+                      "font-semibold",
+                      theme === "light" ? "text-gray-900" : "text-white"
+                    )}>
+                      Notifications
+                    </h3>
+                  </div>
+                  
+                  <div className="max-h-96 overflow-y-auto">
+                    <div className={cn(
+                      "p-3 border-b",
+                      theme === "light" ? "border-gray-200" : "border-zinc-800"
+                    )}>
+                      <h4 className={cn(
+                        "text-sm font-medium mb-2",
+                        theme === "light" ? "text-gray-700" : "text-zinc-300"
+                      )}>
+                        Récentes
+                      </h4>
+                      {NOTIFICATIONS.filter(notif => !notif.read).length > 0 ? (
+                        <ul className="space-y-2">
+                          {NOTIFICATIONS.filter(notif => !notif.read).map(notification => (
+                            <li key={notification.id} className={cn(
+                              "p-2 rounded-md flex items-start",
+                              theme === "light" ? "hover:bg-gray-100" : "hover:bg-zinc-800"
+                            )}>
+                              <div className="flex-1">
+                                <p className={cn(
+                                  "text-sm",
+                                  theme === "light" ? "text-gray-800" : "text-white"
+                                )}>
+                                  {notification.content}
+                                </p>
+                                <p className={cn(
+                                  "text-xs mt-1",
+                                  theme === "light" ? "text-gray-500" : "text-zinc-400"
+                                )}>
+                                  {notification.timestamp}
+                                </p>
+                              </div>
+                              <span className="h-2 w-2 mt-1 rounded-full bg-red-500 flex-shrink-0" />
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className={cn(
+                          "text-sm italic",
+                          theme === "light" ? "text-gray-500" : "text-zinc-400"
+                        )}>
+                          Aucune notification récente
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="p-3">
+                      <h4 className={cn(
+                        "text-sm font-medium mb-2",
+                        theme === "light" ? "text-gray-700" : "text-zinc-300"
+                      )}>
+                        Historique
+                      </h4>
+                      <ul className="space-y-2">
+                        {NOTIFICATIONS.filter(notif => notif.read).map(notification => (
+                          <li key={notification.id} className={cn(
+                            "p-2 rounded-md",
+                            theme === "light" ? "hover:bg-gray-100" : "hover:bg-zinc-800"
+                          )}>
+                            <p className={cn(
+                              "text-sm",
+                              theme === "light" ? "text-gray-800" : "text-white"
+                            )}>
+                              {notification.content}
+                            </p>
+                            <p className={cn(
+                              "text-xs mt-1",
+                              theme === "light" ? "text-gray-500" : "text-zinc-400"
+                            )}>
+                              {notification.timestamp}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className={cn(
+                    "p-2 border-t flex justify-end",
+                    theme === "light" ? "border-gray-200" : "border-zinc-800"
+                  )}>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className={cn(
+                        "text-xs",
+                        theme === "light" ? "text-gray-700" : "text-zinc-300"
+                      )}
+                      onClick={() => {
+                        // Marquer toutes les notifications comme lues
+                        toast({
+                          title: "Notifications",
+                          description: "Toutes les notifications ont été marquées comme lues.",
+                        });
+                        setShowNotifications(false);
+                      }}
+                    >
+                      Tout marquer comme lu
+                    </Button>
+                  </div>
+                </div>
               )}
-            >
-              <Bell className="h-5 w-5" />
-            </Button>
+            </div>
+            {/* Bouton de groupe commenté car inutile
             <Button
               variant="ghost"
               size="icon"
@@ -766,6 +954,7 @@ export default function DashboardPage() {
             >
               <Users className="h-5 w-5" />
             </Button>
+            */}
           </div>
         </header>
 
