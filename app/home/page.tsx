@@ -1,18 +1,55 @@
 "use client"
 
 import type React from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageSquare, Users, Activity, Star } from "lucide-react"
+import { MessageSquare, Users, Activity } from "lucide-react"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 
+// Données locales pour la page d'accueil
+const localSalons = [
+  { id: 1, name: "general", unread: true },
+  { id: 2, name: "minecraft", unread: false },
+  { id: 3, name: "fortnite", unread: false },
+  { id: 4, name: "valorant", unread: true },
+];
+
+const localOnlineUsers = [
+  { id: 1, name: "GamerPro99" },
+];
+
+const localRecentGames = [
+  { id: 1, name: "Valorant" },
+  { id: 2, name: "Minecraft" },
+  { id: 3, name: "Apex Legends" },
+];
+
 export default function HomePage() {
   const { theme } = useTheme()
+  
+  // États pour stocker les données dynamiques
+  const [activeChats, setActiveChats] = useState(0)
+  const [onlineFriends, setOnlineFriends] = useState(0)
+  const [recentGames, setRecentGames] = useState(0)
+  
+  // Effet pour calculer les données dynamiques au chargement de la page
+  useEffect(() => {
+    // Nombre de salons avec des messages non lus (chats actifs)
+    const activeChatCount = localSalons.filter(salon => salon.unread).length
+    setActiveChats(activeChatCount)
+    
+    // Nombre d'utilisateurs en ligne
+    setOnlineFriends(localOnlineUsers.length)
+    
+    // Nombre de jeux récents
+    setRecentGames(localRecentGames.length)
+  }, [])
 
   return (
     <div className={cn("min-h-screen p-8", theme === "light" ? "bg-gray-50 text-gray-900" : "bg-black text-white")}>
@@ -50,11 +87,10 @@ export default function HomePage() {
         <ThemeToggle />
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard icon={<MessageSquare className="h-6 w-6" />} title="Active Chats" value="5" theme={theme} />
-        <StatCard icon={<Users className="h-6 w-6" />} title="Online Friends" value="12" theme={theme} />
-        <StatCard icon={<Activity className="h-6 w-6" />} title="Recent Games" value="8" theme={theme} />
-        <StatCard icon={<Star className="h-6 w-6" />} title="Achievements" value="23" theme={theme} />
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
+        <StatCard icon={<MessageSquare className="h-6 w-6" />} title="Active Chats" value={activeChats.toString()} theme={theme} />
+        <StatCard icon={<Users className="h-6 w-6" />} title="Online Friends" value={onlineFriends.toString()} theme={theme} />
+        <StatCard icon={<Activity className="h-6 w-6" />} title="Recent Games" value={recentGames.toString()} theme={theme} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
