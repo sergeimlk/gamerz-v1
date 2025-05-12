@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageSquare, Users, Activity, Star } from "lucide-react"
+import { MessageSquare, Users, Activity, Star, ArrowLeft } from "lucide-react"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -16,13 +16,28 @@ export default function HomePage() {
   return (
     <div className={cn("min-h-screen p-8", theme === "light" ? "bg-gray-50 text-gray-900" : "bg-black text-white")}>
       <header className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, <span className="text-red-500">GamerPro99</span>!
-          </h1>
-          <p className={theme === "light" ? "text-gray-600" : "text-zinc-400"}>
-            Here's what's happening in your gaming world.
-          </p>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "rounded-full",
+              theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-white hover:bg-white/10"
+            )}
+            asChild
+          >
+            <Link href="/dashboard" title="Retour au dashboard">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome back, <span className="text-red-500">GamerPro99</span>!
+            </h1>
+            <p className={theme === "light" ? "text-gray-600" : "text-zinc-400"}>
+              Here's what's happening in your gaming world.
+            </p>
+          </div>
         </div>
         <ThemeToggle />
       </header>

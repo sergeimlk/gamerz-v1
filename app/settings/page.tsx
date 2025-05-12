@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useTheme } from "@/contexts/theme-context";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ArrowLeft } from "lucide-react";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -52,7 +54,20 @@ export default function SettingsPage() {
         theme === "light" ? "bg-gray-50 text-gray-900" : "bg-black text-white"
       )}
     >
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "rounded-full",
+            theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-white hover:bg-white/10"
+          )}
+          asChild
+        >
+          <Link href="/dashboard" title="Retour au dashboard">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        </Button>
         <ThemeToggle />
       </div>
 
